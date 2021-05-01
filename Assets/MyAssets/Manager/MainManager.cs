@@ -35,7 +35,7 @@ public class MainManager : MonoBehaviour
     }
     public void Interstitial()
     {
-        adMob.RequestInterstitial();
+        adMob.ShowInterstitial();
     }
     public void Reward()
     {

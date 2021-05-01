@@ -14,6 +14,7 @@ public class AdMob : MonoBehaviour
     public string rewardId;
 
     private BannerView bannerView;
+    private InterstitialAd interstitial;
     private RewardedAd rewardedAd;
     private bool isRewarded = false;
     // Use this for initialization
@@ -26,6 +27,7 @@ public class AdMob : MonoBehaviour
 
 
         RequestReward();
+        RequestInterstitial();
 
     }
     private void Update()
@@ -43,7 +45,14 @@ public class AdMob : MonoBehaviour
 
     public void RequestBanner()
     {
-        bannerView = new BannerView(bannerId, AdSize.IABBanner, AdPosition.Bottom);
+        if (bannerView != null)
+        {
+            return;
+        }
+        AdSize adaptiveSize =
+              AdSize.GetCurrentOrientationAnchoredAdaptiveBannerAdSizeWithWidth(AdSize.FullWidth);
+        bannerView = new BannerView(bannerId, adaptiveSize, AdPosition.Bottom);
+
         AdRequest request = new AdRequest.Builder().Build();
         bannerView.LoadAd(request);
     }
@@ -56,25 +65,58 @@ public class AdMob : MonoBehaviour
     }
     public void ShowBanner()
     {
-        if (bannerView == null)
-            RequestBanner();
+        if (bannerView != null)
+        {
+            return;
+        }
         else
-            bannerView.Show();
+        {
+            RequestBanner();
+        }
     }
     public void RequestInterstitial()
     {
-        InterstitialAd interstitial;
+        if (interstitial != null)
+        {
+            interstitial.Destroy();
+        }
         interstitial = new InterstitialAd(interstitialId);
+
+        interstitial.OnAdLoaded += HandleInterstitialAdLoaded;
+        interstitial.OnAdFailedToLoad += HandleInterstitialAdFailedToLoad;
+        interstitial.OnAdOpening += HandleInterstitialAdOpening;
+        interstitial.OnAdClosed += HandleInterstitialAdClosed;
+        interstitial.OnAdLeavingApplication += HandleInterstitialAdLeavingApplication;
+
         AdRequest request = new AdRequest.Builder().Build();
         interstitial.LoadAd(request);
+    }
+    public void ShowInterstitial()
+    {
         if (interstitial.IsLoaded())
         {
             interstitial.Show();
         }
-        else
-        {
-            Debug.Log("interstitial not loaded");
-        }
+    }
+    public void HandleInterstitialAdLoaded(object sender, EventArgs args)
+    {
+
+    }
+    public void HandleInterstitialAdFailedToLoad(object sender, AdFailedToLoadEventArgs args)
+    {
+
+    }
+    public void HandleInterstitialAdOpening(object sender, EventArgs args)
+    {
+
+    }
+    public void HandleInterstitialAdClosed(object sender, EventArgs args)
+    {
+        RequestInterstitial();
+        Debug.Log("interstitial close");
+    }
+    public void HandleInterstitialAdLeavingApplication(object sender, EventArgs args)
+    {
 
     }
 

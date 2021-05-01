@@ -209,9 +209,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   appId: ca-app-pub-8228022567048160~5015842514
-  bannerId: ca-app-pub-8228022567048160/6220580142
-  interstitialId: ca-app-pub-8228022567048160/4169131878
-  rewardId: ca-app-pub-8228022567048160/1028318432
+  bannerId: ca-app-pub-3940256099942544/6300978111
+  interstitialId: ca-app-pub-3940256099942544/1033173712
+  rewardId: ca-app-pub-3940256099942544/5224354917
 --- !u!1 &288438814
 GameObject:
   m_ObjectHideFlags: 0
