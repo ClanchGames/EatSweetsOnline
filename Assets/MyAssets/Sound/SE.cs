@@ -35,6 +35,8 @@ public class SE : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
         StartCoroutine("TestSE");
         //aa
+        //b
+        //c
     }
 
     // Update is called once per frame
