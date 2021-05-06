@@ -5,10 +5,11 @@ using UnityEngine;
 public class SE : MonoBehaviour
 {
     [NamedArray(new string[]{
-        "a",
-        "b"
+       "GameClear",
+       "GameOver",
+       "pokopoko",
         })]
-    public string[] a;
+    public AudioClip[] AudioClips;
 
     // Start is called before the first frame update
     void Start()
