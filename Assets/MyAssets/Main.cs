@@ -4,26 +4,28 @@ using UnityEngine;
 using GoogleMobileAds.Api;
 using static AdMob;
 
-public class MainController : MonoBehaviour
+public class Main : MonoBehaviour
 {
-    SaveController SC;
+    public static Main main;
+    public SaveData saveData;
+
     private void Awake()
     {
-        SC = GetComponent<SaveController>();
-        SaveController.SC = SC;
-        if (SaveData.SD.isFirst)
+        main = this;
+        //まだセーブファイルが作成されてないとき初期化
+        if (SaveSystem.Load() == null)
         {
-            SaveData.SD.isFirst = false;
+            Debug.Log("first");
             InitializeClass();
         }
         else
         {
-            SaveController.SC.Load();
+            MainLoad();
         }
     }
     void Start()
     {
-
+        StartCoroutine("MainSave", 1f);
     }
     void Test()
     {
@@ -32,6 +34,22 @@ public class MainController : MonoBehaviour
     void Update()
     {
 
+    }
+    IEnumerator MainSave()
+    {
+        int x = 0;
+        while (x < 10000)
+        {
+            x++;
+            SaveSystem.Save(saveData);
+            yield return new WaitForSeconds(1f);
+        }
+    }
+    public void MainLoad()
+    {
+        Debug.Log("load");
+        saveData = SaveSystem.Load();
+        Debug.Log(saveData.playerdata.level);
     }
 
     void InitializeClass()

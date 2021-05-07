@@ -9,11 +9,11 @@ public class SaveData
     {
         get
         {
-            return SaveController.SC.saveData;
+            return Main.main.saveData;
         }
         set
         {
-            SaveController.SC.saveData = value;
+            Main.main.saveData = value;
         }
     }
     public PlayerData playerdata;
