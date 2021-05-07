@@ -4,23 +4,40 @@ using UnityEngine;
 using GoogleMobileAds.Api;
 using static AdMob;
 
-public class MainManager : MonoBehaviour
+public class MainController : MonoBehaviour
 {
-
-    // Start is called before the first frame update
+    SaveController SC;
+    private void Awake()
+    {
+        SC = GetComponent<SaveController>();
+        SaveController.SC = SC;
+        if (SaveData.SD.isFirst)
+        {
+            SaveData.SD.isFirst = false;
+            InitializeClass();
+        }
+        else
+        {
+            SaveController.SC.Load();
+        }
+    }
     void Start()
     {
-        // AdMob.adMob.RequestBanner();
+
     }
     void Test()
     {
     }
-    // Update is called once per frame
+
     void Update()
     {
 
     }
 
+    void InitializeClass()
+    {
+        SaveData.SD.playerdata = new PlayerData();
+    }
     public void Banner()
     {
         adMob.RequestBanner();
