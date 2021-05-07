@@ -1,24 +1,30 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class Player : MonoBehaviour
 {
-    public int level;
-    public int health;
-
+    public int level { get; set; } = 0;
+    public int health { get; set; } = 0;
+    TextMeshProUGUI leveltext;
     // Start is called before the first frame update
     void Start()
     {
+        leveltext = GetComponent<TextMeshProUGUI>();
 
     }
 
     // Update is called once per frame
     void Update()
     {
-
+        leveltext.text = level.ToString();
     }
-
+    public void LevelUp()
+    {
+        level++;
+    }
     public void SavePlayer()
     {
         SaveSystem.SavePlayer(this);
