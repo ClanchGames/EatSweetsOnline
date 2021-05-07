@@ -3,6 +3,7 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 public static class SaveSystem
 {
+    //a
     public static void SavePlayer(Player player)
     {
         BinaryFormatter formatter = new BinaryFormatter();
