@@ -105,13 +105,11 @@ namespace GoogleMobileAds.Api
             Instance.client.SetiOSAppPauseOnBackground(pause);
         }
 
-        internal static IClientFactory GetClientFactory()
-        {
-            if (clientFactory == null)
-            {
-                clientFactory = new GoogleMobileAdsClientFactory();
-            }
-            return clientFactory;
+        internal static IClientFactory GetClientFactory() {
+          if (clientFactory == null) {
+            clientFactory = new GoogleMobileAdsClientFactory();
+          }
+          return clientFactory;
         }
 
         private static IMobileAdsClient GetMobileAdsClient()
