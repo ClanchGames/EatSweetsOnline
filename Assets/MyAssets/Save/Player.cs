@@ -8,11 +8,10 @@ public class Player : MonoBehaviour
 {
     public int level { get; set; } = 0;
     public int health { get; set; } = 0;
-    TextMeshProUGUI leveltext;
+    public TextMeshProUGUI leveltext;
     // Start is called before the first frame update
     void Start()
     {
-        leveltext = GetComponent<TextMeshProUGUI>();
 
     }
 
