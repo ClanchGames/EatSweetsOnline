@@ -31,7 +31,7 @@ public class DummyAdBehaviour : MonoBehaviour
 
     public GameObject ShowAd(GameObject dummyAd, Vector3 position)
     {
-       return Instantiate(dummyAd, position, Quaternion.identity) as GameObject;
+        return Instantiate(dummyAd, position, Quaternion.identity) as GameObject;
     }
 
     public void DestroyAd(GameObject dummyAd)

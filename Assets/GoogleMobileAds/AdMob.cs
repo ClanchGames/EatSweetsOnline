@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using GoogleMobileAds.Api;
+using UnityEngine.UI;
 
 
 public class AdMob : MonoBehaviour
@@ -17,6 +18,8 @@ public class AdMob : MonoBehaviour
     private InterstitialAd interstitial;
     private RewardedAd rewardedAd;
     private bool isRewarded = false;
+
+    public Text logtext;
     // Use this for initialization
     void Start()
     {
@@ -24,7 +27,6 @@ public class AdMob : MonoBehaviour
 
         // Initialize the Google Mobile Ads SDK.
         MobileAds.Initialize(initStatus => { });
-
 
         RequestReward();
         RequestInterstitial();
@@ -144,28 +146,29 @@ public class AdMob : MonoBehaviour
     {
         if (rewardedAd.IsLoaded())
         {
-            rewardedAd.Show();
+            logtext.text = "show";
+            RequestReward();
+        }
+        else
+        {
+            logtext.text = "fail to load so request";
+            RequestReward();
         }
     }
+
+
     public void GetReward()
     {
         Debug.Log("Show Reward");
     }
 
-    public void CreateAndLoadRewardedAd()
-    {
-        rewardedAd = new RewardedAd(rewardId);
 
-        rewardedAd.OnAdLoaded += HandleRewardedAdLoaded;
-        rewardedAd.OnUserEarnedReward += HandleUserEarnedReward;
-        rewardedAd.OnAdClosed += HandleRewardedAdClosed;
-
-        AdRequest request = new AdRequest.Builder().Build();
-        rewardedAd.LoadAd(request);
-    }
     public void HandleRewardedAdLoaded(object sender, EventArgs args)
     {
         print("HandleRewardedAdLoaded event received");
+        logtext.text = "reward loaded";
+        rewardedAd.Show();
+
     }
 
     public void HandleRewardedAdFailedToLoad(object sender, AdErrorEventArgs args)
@@ -173,12 +176,13 @@ public class AdMob : MonoBehaviour
         print(
             "HandleRewardedAdFailedToLoad event received with message: "
                              + args.Message);
-
+        logtext.text = "failed to load";
     }
 
     public void HandleRewardedAdOpening(object sender, EventArgs args)
     {
         print("HandleRewardedAdOpening event received");
+        logtext.text = "reward open";
     }
 
     public void HandleRewardedAdFailedToShow(object sender, AdErrorEventArgs args)
@@ -186,12 +190,13 @@ public class AdMob : MonoBehaviour
         print(
             "HandleRewardedAdFailedToShow event received with message: "
                              + args.Message);
+        logtext.text = "failed to show";
     }
 
     public void HandleRewardedAdClosed(object sender, EventArgs args)
     {
         print("HandleRewardedAdClosed event received");
-        CreateAndLoadRewardedAd();
+        logtext.text = "close reward ";
     }
 
     public void HandleUserEarnedReward(object sender, Reward args)
@@ -202,5 +207,6 @@ public class AdMob : MonoBehaviour
             "HandleRewardedAdRewarded event received for "
                         + amount.ToString() + " " + type);
         isRewarded = true;
+        logtext.text = "earned reward";
     }
 }
