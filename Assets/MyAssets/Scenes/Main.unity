@@ -1621,7 +1621,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 509.09}
-  m_SizeDelta: {x: 1000, y: 100}
+  m_SizeDelta: {x: 1000, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &766682609
 MonoBehaviour:
@@ -2106,7 +2106,7 @@ RectTransform:
   m_Children:
   - {fileID: 298896399}
   m_Father: {fileID: 1434816941}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -2157,8 +2157,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: MainManager, Assembly-CSharp
+      - m_Target: {fileID: 1709697432}
+        m_TargetAssemblyTypeName: Main, Assembly-CSharp
         m_MethodName: HideBanner
         m_Mode: 1
         m_Arguments:
@@ -2239,7 +2239,7 @@ RectTransform:
   m_Children:
   - {fileID: 357820072}
   m_Father: {fileID: 1434816941}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -2290,8 +2290,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: MainManager, Assembly-CSharp
+      - m_Target: {fileID: 1709697432}
+        m_TargetAssemblyTypeName: Main, Assembly-CSharp
         m_MethodName: ShowBanner
         m_Mode: 1
         m_Arguments:
@@ -2557,8 +2557,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: MainManager, Assembly-CSharp
+      - m_Target: {fileID: 1709697432}
+        m_TargetAssemblyTypeName: Main, Assembly-CSharp
         m_MethodName: Reward
         m_Mode: 1
         m_Arguments:
@@ -2690,8 +2690,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: MainManager, Assembly-CSharp
+      - m_Target: {fileID: 1709697432}
+        m_TargetAssemblyTypeName: Main, Assembly-CSharp
         m_MethodName: Interstitial
         m_Mode: 1
         m_Arguments:
@@ -2997,8 +2997,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: MainManager, Assembly-CSharp
+      - m_Target: {fileID: 1709697432}
+        m_TargetAssemblyTypeName: Main, Assembly-CSharp
         m_MethodName: Banner
         m_Mode: 1
         m_Arguments:
@@ -3077,9 +3077,9 @@ RectTransform:
   - {fileID: 1387281755}
   - {fileID: 1233552499}
   - {fileID: 1188402941}
-  - {fileID: 1675567964}
   - {fileID: 960944156}
   - {fileID: 1079373268}
+  - {fileID: 1675567964}
   m_Father: {fileID: 24941245}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3254,7 +3254,7 @@ RectTransform:
   m_Children:
   - {fileID: 1362806811}
   m_Father: {fileID: 1434816941}
-  m_RootOrder: 3
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
