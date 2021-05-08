@@ -176,7 +176,7 @@ public class AdMob : MonoBehaviour
         print(
             "HandleRewardedAdFailedToLoad event received with message: "
                              + args.Message);
-        logtext.text = "failed to load";
+        logtext.text = "failed to load:" + args.Message;
     }
 
     public void HandleRewardedAdOpening(object sender, EventArgs args)
