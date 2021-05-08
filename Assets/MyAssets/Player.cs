@@ -19,12 +19,12 @@ public class Player : MonoBehaviour
     void Update()
     {
         leveltext.text = level.ToString();
-        SaveData.SD.playerdata.level = level;
+        level = SaveData.SD.playerdata.level;
 
     }
     public void LevelUp()
     {
-        level++;
+        SaveData.SD.playerdata.level++;
     }
 
 }

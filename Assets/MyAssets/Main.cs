@@ -7,25 +7,28 @@ using static AdMob;
 public class Main : MonoBehaviour
 {
     public static Main main;
+    DebugSystem debug;
     public SaveData saveData;
 
     private void Awake()
     {
         main = this;
+        debug = GetComponent<DebugSystem>();
+        DebugSystem.debug = debug;
         //まだセーブファイルが作成されてないとき初期化
         if (SaveSystem.Load() == null)
         {
             Debug.Log("first");
             InitializeClass();
         }
-        else
+        else //ファイルが作られているならLoad
         {
             MainLoad();
         }
     }
     void Start()
     {
-        StartCoroutine("MainSave", 1f);
+        //StartCoroutine("MainSave", 1f);
     }
     void Test()
     {
@@ -45,13 +48,21 @@ public class Main : MonoBehaviour
             yield return new WaitForSeconds(1f);
         }
     }
+
+    public void Save()
+    {
+        SaveSystem.Save(saveData);
+    }
     public void MainLoad()
     {
-        Debug.Log("load");
         saveData = SaveSystem.Load();
         Debug.Log(saveData.playerdata.level);
     }
-
+    public void MainDelete()
+    {
+        InitializeClass();
+        DebugSystem.debug.Log("delete");
+    }
     void InitializeClass()
     {
         SaveData.SD.playerdata = new PlayerData();
