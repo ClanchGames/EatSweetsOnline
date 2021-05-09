@@ -7,9 +7,9 @@ public static class SaveSystem
     {
         BinaryFormatter formatter = new BinaryFormatter();
         string path = Application.persistentDataPath + "/savedata.txt";
-        Debug.Log(DebugSystem.debug);
-        Debug.Log(DebugSystem.debug.Log("s"));
-        DebugSystem.debug.Log("save:" + path);
+        // Debug.Log(DebugSystem.debug);
+        //  Debug.Log(DebugSystem.debug.Log("s"));
+        // DebugSystem.debug.Log("save:" + path);
         FileStream stream = new FileStream(path, FileMode.Create);
 
         formatter.Serialize(stream, data);
@@ -21,9 +21,9 @@ public static class SaveSystem
         string path = Application.persistentDataPath + "/savedata.txt";
         if (File.Exists(path))
         {
-            Debug.Log(DebugSystem.debug);
-            Debug.Log(DebugSystem.debug.Log("l"));
-            DebugSystem.debug.Log("load:" + path);
+            // Debug.Log(DebugSystem.debug);
+            // Debug.Log(DebugSystem.debug.Log("l"));
+            // DebugSystem.debug.Log("load:" + path);
             BinaryFormatter formatter = new BinaryFormatter();
             FileStream stream = new FileStream(path, FileMode.Open);
 

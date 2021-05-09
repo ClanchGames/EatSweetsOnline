@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using GoogleMobileAds.Api;
+
 using static AdMob;
 
 public class Main : MonoBehaviour
@@ -56,7 +56,7 @@ public class Main : MonoBehaviour
     public void MainLoad()
     {
         saveData = SaveSystem.Load();
-        Debug.Log(saveData.playerdata.level);
+        // Debug.Log(saveData.playerdata.level);
     }
     public void MainDelete()
     {
@@ -66,6 +66,24 @@ public class Main : MonoBehaviour
     void InitializeClass()
     {
         SaveData.SD.playerdata = new PlayerData();
+    }
+
+    public void ShowNormalBanner()
+    {
+        StartCoroutine(adMob.ShowNormalBanner());
+    }
+    public void ShowLargeBanner()
+    {
+        StartCoroutine(adMob.ShowLargeBanner());
+    }
+
+    public void HideNormalBanner()
+    {
+        adMob.HideNormalBanner();
+    }
+    public void HideLargeBanner()
+    {
+        adMob.HideLargeBanner();
     }
     public void Banner()
     {

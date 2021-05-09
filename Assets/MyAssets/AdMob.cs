@@ -11,10 +11,19 @@ public class AdMob : MonoBehaviour
     public static AdMob adMob;
     public string appId;
     public string bannerId;
+    public string normalBannerId;
+    public string largeBannerId;
     public string interstitialId;
     public string rewardId;
 
     private BannerView bannerView;
+    private BannerView normalBanner;
+    private BannerView largeBanner;
+    bool normalBannerIsDisplay = false;
+    bool largeBannerIsDisplay = false;
+    bool normalBannerIsLoaded = false;
+    bool largeBannerIsLoaded = false;
+
     private InterstitialAd interstitial;
     private RewardedAd rewardedAd;
     private bool isRewarded = false;
@@ -28,7 +37,10 @@ public class AdMob : MonoBehaviour
         // Initialize the Google Mobile Ads SDK.
         MobileAds.Initialize(initStatus => { });
 
-        RequestReward();
+
+        RequestNormalBanner();
+        RequestLargeBanner();
+
         RequestInterstitial();
 
     }
@@ -44,6 +56,30 @@ public class AdMob : MonoBehaviour
     {
         Debug.Log("test");
     }
+    void RequestNormalBanner()
+    {
+        if (normalBanner != null)
+        {
+            normalBanner.Destroy();
+        }
+        normalBanner = new BannerView(normalBannerId, AdSize.Banner, AdPosition.Bottom);
+
+        normalBanner.OnAdLoaded += HandleOnNormalBannerLoaded;
+        AdRequest request = new AdRequest.Builder().Build();
+        normalBanner.LoadAd(request);
+    }
+    void RequestLargeBanner()
+    {
+        if (largeBanner != null)
+        {
+            largeBanner.Destroy();
+        }
+
+        largeBanner = new BannerView(largeBannerId, AdSize.MediumRectangle, AdPosition.Center);
+        largeBanner.OnAdLoaded += HandleOnLargeBannerLoaded;
+        AdRequest request = new AdRequest.Builder().Build();
+        largeBanner.LoadAd(request);
+    }
 
     public void RequestBanner()
     {
@@ -58,24 +94,120 @@ public class AdMob : MonoBehaviour
         AdRequest request = new AdRequest.Builder().Build();
         bannerView.LoadAd(request);
     }
-    public void HideBanner()
+    public IEnumerator ShowNormalBanner()
     {
-        if (bannerView == null) return;
-        bannerView.Hide();
-        bannerView.Destroy();
-        bannerView = null;
-    }
-    public void ShowBanner()
-    {
-        if (bannerView != null)
+        if (normalBannerIsDisplay)
         {
-            return;
+            yield break;
+        }
+        int timeout = 1000;
+        float trytime = Time.realtimeSinceStartup;
+        if (normalBanner == null)
+        {
+            Debug.Log("normalbanner null so request and show");
+            RequestNormalBanner();
+            yield return new WaitUntil(() => normalBannerIsLoaded || Time.realtimeSinceStartup - trytime > timeout);
+            if (normalBannerIsLoaded)
+            {
+                normalBanner.Show();
+                normalBannerIsDisplay = true;
+            }
+            else if (Time.realtimeSinceStartup - trytime > timeout)
+            {
+                Debug.Log("normal banner fail to load");
+            }
+
         }
         else
         {
-            RequestBanner();
+
+            Debug.Log("show normal");
+            normalBanner.Show();
+            normalBannerIsDisplay = true;
         }
     }
+    public IEnumerator ShowLargeBanner()
+    {
+        if (largeBannerIsDisplay)
+        {
+            yield break;
+        }
+        int timeout = 1000;
+        float trytime = Time.realtimeSinceStartup;
+        if (largeBanner == null)
+        {
+            Debug.Log("largebanner null so request and show");
+            RequestLargeBanner();
+            yield return new WaitUntil(() => largeBannerIsLoaded || Time.realtimeSinceStartup - trytime > timeout);
+            if (largeBannerIsLoaded)
+            {
+                largeBanner.Show();
+                largeBannerIsDisplay = true;
+            }
+            else if (Time.realtimeSinceStartup - trytime > timeout)
+            {
+                Debug.Log("large banner fail to load");
+            }
+
+        }
+        else
+        {
+            Debug.Log("show large");
+            largeBanner.Show();
+            largeBannerIsDisplay = true;
+        }
+    }
+    public void HideNormalBanner()
+    {
+        if (normalBanner != null)
+        {
+            normalBanner.Hide();
+            normalBannerIsDisplay = false;
+        }
+    }
+
+    public void HideLargeBanner()
+    {
+        if (largeBanner != null)
+        {
+            largeBanner.Hide();
+            largeBannerIsDisplay = false;
+        }
+    }
+    public void ShowBanner()
+    {
+        /* if (bannerView != null)
+         {
+             return;
+         }
+         else
+         {
+             RequestBanner();
+         }*/
+
+
+    }
+    public void HideBanner()
+    {
+        /* if (bannerView == null) return;
+         bannerView.Hide();
+         bannerView.Destroy();
+         bannerView = null;*/
+    }
+
+    public void HandleOnNormalBannerLoaded(object sender, EventArgs args)
+    {
+        print("HandleAdLoaded event received");
+        normalBannerIsLoaded = true;
+        normalBanner.Hide();
+    }
+    public void HandleOnLargeBannerLoaded(object sender, EventArgs args)
+    {
+        print("HandleAdLoaded event received");
+        largeBannerIsLoaded = true;
+        largeBanner.Hide();
+    }
+
     public void RequestInterstitial()
     {
         if (interstitial != null)
@@ -144,16 +276,27 @@ public class AdMob : MonoBehaviour
     }
     public void ShowRewardAd()
     {
-        if (rewardedAd.IsLoaded())
+        //ç≈èâÇÕÇ±Ç±Ç…ÇÕÇ¢ÇÈ
+        if (rewardedAd == null)
         {
-            logtext.text = "show";
             RequestReward();
+            logtext.text = "show";
         }
         else
         {
-            logtext.text = "fail to load so request";
-            RequestReward();
+            //Ç±Ç±Ç…ÇÕì¸ÇÁÇ»Ç¢ÇÕÇ∏
+            if (rewardedAd.IsLoaded())
+            {
+                logtext.text = "show";
+                rewardedAd.Show();
+            }
+            elseÅ@//äÓñ{Ç±Ç¡ÇøÇ…ì¸ÇÈ
+            {
+                logtext.text = "fail to load so request";
+                RequestReward();
+            }
         }
+
     }
 
 
@@ -167,6 +310,7 @@ public class AdMob : MonoBehaviour
     {
         print("HandleRewardedAdLoaded event received");
         logtext.text = "reward loaded";
+        //ì«Ç›çûÇ›Ç™èIÇÌÇ¡ÇƒÇ©ÇÁShowÇ∑ÇÈ
         rewardedAd.Show();
 
     }
