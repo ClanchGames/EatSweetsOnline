@@ -41,7 +41,6 @@ public class AdMob : MonoBehaviour
         RequestNormalBanner();
         RequestLargeBanner();
 
-        RequestInterstitial();
 
     }
     private void Update()
@@ -94,69 +93,84 @@ public class AdMob : MonoBehaviour
         AdRequest request = new AdRequest.Builder().Build();
         bannerView.LoadAd(request);
     }
-    public IEnumerator ShowNormalBanner()
+    public void ShowNormalBanner()
     {
-        if (normalBannerIsDisplay)
-        {
-            yield break;
-        }
-        int timeout = 1000;
-        float trytime = Time.realtimeSinceStartup;
-        if (normalBanner == null)
-        {
-            Debug.Log("normalbanner null so request and show");
-            RequestNormalBanner();
-            yield return new WaitUntil(() => normalBannerIsLoaded || Time.realtimeSinceStartup - trytime > timeout);
-            if (normalBannerIsLoaded)
-            {
-                normalBanner.Show();
-                normalBannerIsDisplay = true;
-            }
-            else if (Time.realtimeSinceStartup - trytime > timeout)
-            {
-                Debug.Log("normal banner fail to load");
-            }
-
-        }
-        else
-        {
-
-            Debug.Log("show normal");
-            normalBanner.Show();
-            normalBannerIsDisplay = true;
-        }
+        if (normalBannerIsDisplay) return;
+        Debug.Log("show normal");
+        normalBanner.Show();
+        normalBannerIsDisplay = true;
     }
-    public IEnumerator ShowLargeBanner()
+    public void ShowLargeBanner()
     {
-        if (largeBannerIsDisplay)
-        {
-            yield break;
-        }
-        int timeout = 1000;
-        float trytime = Time.realtimeSinceStartup;
-        if (largeBanner == null)
-        {
-            Debug.Log("largebanner null so request and show");
-            RequestLargeBanner();
-            yield return new WaitUntil(() => largeBannerIsLoaded || Time.realtimeSinceStartup - trytime > timeout);
-            if (largeBannerIsLoaded)
-            {
-                largeBanner.Show();
-                largeBannerIsDisplay = true;
-            }
-            else if (Time.realtimeSinceStartup - trytime > timeout)
-            {
-                Debug.Log("large banner fail to load");
-            }
+        if (largeBannerIsDisplay) return;
+        Debug.Log("show large");
+        largeBanner.Show();
+        largeBannerIsDisplay = true;
 
-        }
-        else
-        {
-            Debug.Log("show large");
-            largeBanner.Show();
-            largeBannerIsDisplay = true;
-        }
     }
+    /* public IEnumerator ShowNormalBanner()
+     {
+         if (normalBannerIsDisplay)
+         {
+             yield break;
+         }
+         int timeout = 1000;
+         float trytime = Time.realtimeSinceStartup;
+         if (normalBanner == null)
+         {
+             Debug.Log("normalbanner null so request and show");
+             RequestNormalBanner();
+             yield return new WaitUntil(() => normalBannerIsLoaded || Time.realtimeSinceStartup - trytime > timeout);
+             if (normalBannerIsLoaded)
+             {
+                 normalBanner.Show();
+                 normalBannerIsDisplay = true;
+             }
+             else if (Time.realtimeSinceStartup - trytime > timeout)
+             {
+                 Debug.Log("normal banner fail to load");
+             }
+
+         }
+         else
+         {
+
+             Debug.Log("show normal");
+             normalBanner.Show();
+             normalBannerIsDisplay = true;
+         }
+     }
+     public IEnumerator ShowLargeBanner()
+     {
+         if (largeBannerIsDisplay)
+         {
+             yield break;
+         }
+         int timeout = 1000;
+         float trytime = Time.realtimeSinceStartup;
+         if (largeBanner == null)
+         {
+             Debug.Log("largebanner null so request and show");
+             RequestLargeBanner();
+             yield return new WaitUntil(() => largeBannerIsLoaded || Time.realtimeSinceStartup - trytime > timeout);
+             if (largeBannerIsLoaded)
+             {
+                 largeBanner.Show();
+                 largeBannerIsDisplay = true;
+             }
+             else if (Time.realtimeSinceStartup - trytime > timeout)
+             {
+                 Debug.Log("large banner fail to load");
+             }
+
+         }
+         else
+         {
+             Debug.Log("show large");
+             largeBanner.Show();
+             largeBannerIsDisplay = true;
+         }
+     }*/
     public void HideNormalBanner()
     {
         if (normalBanner != null)
@@ -227,18 +241,15 @@ public class AdMob : MonoBehaviour
     }
     public void ShowInterstitial()
     {
-        if (interstitial.IsLoaded())
-        {
-            interstitial.Show();
-        }
+        RequestInterstitial();
     }
     public void HandleInterstitialAdLoaded(object sender, EventArgs args)
     {
-
+        interstitial.Show();
     }
     public void HandleInterstitialAdFailedToLoad(object sender, AdFailedToLoadEventArgs args)
     {
-
+        DebugSystem.debug.Log("fail to load interstitial");
     }
     public void HandleInterstitialAdOpening(object sender, EventArgs args)
     {
@@ -246,7 +257,6 @@ public class AdMob : MonoBehaviour
     }
     public void HandleInterstitialAdClosed(object sender, EventArgs args)
     {
-        RequestInterstitial();
         Debug.Log("interstitial close");
     }
     public void HandleInterstitialAdLeavingApplication(object sender, EventArgs args)

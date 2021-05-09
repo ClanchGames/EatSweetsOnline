@@ -61,20 +61,22 @@ public class Main : MonoBehaviour
     public void MainDelete()
     {
         InitializeClass();
+        Save();
         DebugSystem.debug.Log("delete");
     }
     void InitializeClass()
     {
+        saveData = new SaveData();
         SaveData.SD.playerdata = new PlayerData();
     }
 
     public void ShowNormalBanner()
     {
-        StartCoroutine(adMob.ShowNormalBanner());
+        adMob.ShowNormalBanner();
     }
     public void ShowLargeBanner()
     {
-        StartCoroutine(adMob.ShowLargeBanner());
+        adMob.ShowLargeBanner();
     }
 
     public void HideNormalBanner()
