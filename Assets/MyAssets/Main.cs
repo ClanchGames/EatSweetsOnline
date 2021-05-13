@@ -14,7 +14,6 @@ public class Main : MonoBehaviour
     {
         main = this;
         debug = GetComponent<DebugSystem>();
-        DebugSystem.debug = debug;
         //まだセーブファイルが作成されてないとき初期化
         if (SaveSystem.Load() == null)
         {

@@ -32,8 +32,15 @@ public class AdMob : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        adMob = this;
-
+        if (adMob == null)
+        {
+            adMob = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
         // Initialize the Google Mobile Ads SDK.
         MobileAds.Initialize(initStatus => { });
 
