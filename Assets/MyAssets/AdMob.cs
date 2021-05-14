@@ -115,69 +115,7 @@ public class AdMob : MonoBehaviour
         largeBannerIsDisplay = true;
 
     }
-    /* public IEnumerator ShowNormalBanner()
-     {
-         if (normalBannerIsDisplay)
-         {
-             yield break;
-         }
-         int timeout = 1000;
-         float trytime = Time.realtimeSinceStartup;
-         if (normalBanner == null)
-         {
-             Debug.Log("normalbanner null so request and show");
-             RequestNormalBanner();
-             yield return new WaitUntil(() => normalBannerIsLoaded || Time.realtimeSinceStartup - trytime > timeout);
-             if (normalBannerIsLoaded)
-             {
-                 normalBanner.Show();
-                 normalBannerIsDisplay = true;
-             }
-             else if (Time.realtimeSinceStartup - trytime > timeout)
-             {
-                 Debug.Log("normal banner fail to load");
-             }
 
-         }
-         else
-         {
-
-             Debug.Log("show normal");
-             normalBanner.Show();
-             normalBannerIsDisplay = true;
-         }
-     }
-     public IEnumerator ShowLargeBanner()
-     {
-         if (largeBannerIsDisplay)
-         {
-             yield break;
-         }
-         int timeout = 1000;
-         float trytime = Time.realtimeSinceStartup;
-         if (largeBanner == null)
-         {
-             Debug.Log("largebanner null so request and show");
-             RequestLargeBanner();
-             yield return new WaitUntil(() => largeBannerIsLoaded || Time.realtimeSinceStartup - trytime > timeout);
-             if (largeBannerIsLoaded)
-             {
-                 largeBanner.Show();
-                 largeBannerIsDisplay = true;
-             }
-             else if (Time.realtimeSinceStartup - trytime > timeout)
-             {
-                 Debug.Log("large banner fail to load");
-             }
-
-         }
-         else
-         {
-             Debug.Log("show large");
-             largeBanner.Show();
-             largeBannerIsDisplay = true;
-         }
-     }*/
     public void HideNormalBanner()
     {
         if (normalBanner != null)

@@ -10,6 +10,23 @@ public class Main : MonoBehaviour
     DebugSystem debug;
     public SaveData saveData;
 
+    public bool right;
+    public bool left;
+    public void Right()
+    {
+        right = true;
+        left = false;
+    }
+    public void Left()
+    {
+        left = true;
+        right = false;
+    }
+    public void Stop()
+    {
+        right = false;
+        left = false;
+    }
     private void Awake()
     {
         main = this;
