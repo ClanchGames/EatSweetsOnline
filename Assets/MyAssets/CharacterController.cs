@@ -14,7 +14,7 @@ public class CharacterController : MonoBehaviour
     void Start()
     {
         rigid = GetComponent<Rigidbody>();
-        speed = 100;
+        speed = 500;
     }
 
     // Update is called once per frame
@@ -36,16 +36,18 @@ public class CharacterController : MonoBehaviour
         {
             Vector2 endDragPos = mouseWorldPosition;
             Vector2 startDirection = -1 * (endDragPos - startDragPos).normalized;
+            speed = (endDragPos - startDragPos).magnitude * 250;
             rigid.AddForce(startDirection * speed);
             Debug.Log("End:" + endDragPos);
             Debug.Log("dir:" + startDirection);
         }
 
         //  Debug.Log(;
-        if (Input.GetMouseButtonDown(1))
+        if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(1))
         {
-            rigid.velocity *= 0;
+            rigid.velocity = new Vector3(0, 0, 0);
             Debug.Log(rigid.velocity);
         }
+
     }
 }
