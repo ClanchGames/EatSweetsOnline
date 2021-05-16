@@ -58,8 +58,21 @@ public class MatchMaking : MonoBehaviourPunCallbacks
     // ゲームサーバーへの接続が成功した時に呼ばれるコールバック
     public override void OnJoinedRoom()
     {
-        // ランダムな座標に自身のアバター（ネットワークオブジェクト）を生成する
-        var position = Vector3.zero;
-        PhotonNetwork.Instantiate("Player", position, Quaternion.identity);
+        if (PhotonNetwork.IsMasterClient)
+        {
+            var position = Vector3.zero;
+            GameObject player1 = PhotonNetwork.Instantiate("Player1", position, Quaternion.identity);
+            Main.main.Player1 = player1;
+        }
+        else
+        {
+            var position = new Vector3(1, 1, 0);
+            GameObject player2 = PhotonNetwork.Instantiate("Player2", position, Quaternion.identity);
+            Main.main.Player2 = player2;
+        }
+
+        Main.main.ChangeActive(Main.main.ConnectionScreen, Main.main.BattleScreen);
+
+
     }
 }

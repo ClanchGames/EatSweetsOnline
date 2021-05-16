@@ -105,13 +105,6 @@ public static class MyMethod
         return map;
     }
 
-
-
-
-
-
-
-
     public static string SetTag(string tagname, List<string> taglist)
     {
         if (taglist.Contains(tagname))
@@ -123,5 +116,6 @@ public static class MyMethod
             return null;
         }
     }
+
 
 }

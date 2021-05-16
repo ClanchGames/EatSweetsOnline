@@ -14,11 +14,15 @@ public class Main : MonoBehaviour
     public bool right;
     public bool left;
 
-    public bool isPlayer1Turn = false;
-    public bool isPlayer2Turn = false;
+    public bool isPlayer1Turn { get; set; }
+    public bool isPlayer2Turn { get; set; }
 
-    public GameObject Player1;
-    public GameObject Player2;
+    public GameObject Player1 { get; set; }
+    public GameObject Player2 { get; set; }
+
+    public GameObject HomeScreen;
+    public GameObject ConnectionScreen;
+    public GameObject BattleScreen;
     public void Right()
     {
         right = true;
@@ -62,15 +66,13 @@ public class Main : MonoBehaviour
     {
         //StartCoroutine("MainSave", 1f);
     }
-    void Test()
-    {
-    }
+
 
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.S))
         {
-            MatchMaking.matchMake.StartMatchMaking("p1");
+            MatchMaking.matchMake.StartMatchMaking("aaa");
         }
     }
     IEnumerator MainSave()
@@ -83,6 +85,39 @@ public class Main : MonoBehaviour
             yield return new WaitForSeconds(1f);
         }
     }
+    public void Play()
+    {
+        MatchMaking.matchMake.StartMatchMaking("aaa");
+        ChangeActive(HomeScreen, ConnectionScreen);
+
+    }
+
+
+
+    /// <summary>
+    /// スクリーンの切り替えとか
+    /// </summary>
+    /// <param name="falseObj"></param>
+    /// <param name="trueObj"></param>
+    public void ChangeActive(GameObject falseObj, GameObject trueObj)
+    {
+        if (falseObj.activeSelf)
+            falseObj.SetActive(false);
+        if (!trueObj.activeSelf)
+            trueObj.SetActive(true);
+    }
+
+
+
+
+
+
+
+
+
+
+
+    //ここから下テスト用
 
     public void Save()
     {
