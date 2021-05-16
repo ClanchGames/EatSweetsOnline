@@ -14,6 +14,7 @@ public class Main : MonoBehaviour
     public bool right;
     public bool left;
 
+    public bool isMaster { get; set; }
     public bool isPlayer1Turn { get; set; }
     public bool isPlayer2Turn { get; set; }
 
