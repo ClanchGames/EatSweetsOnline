@@ -19,6 +19,11 @@ public class DeadZone : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         Debug.Log("dead");
+        StartCoroutine(Dead(collision.gameObject));
     }
-
+    IEnumerator Dead(GameObject player)
+    {
+        yield return new WaitForSeconds(1f);
+        Destroy(player);
+    }
 }
