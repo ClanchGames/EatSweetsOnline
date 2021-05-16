@@ -20,6 +20,10 @@ public class CharacterController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Main.main.isPlayer1Turn)
+        {
+
+        }
         mousePosition = Input.mousePosition;
         mousePosition.z = 10;
         mouseWorldPosition = Camera.main.ScreenToWorldPoint(mousePosition);
@@ -30,7 +34,7 @@ public class CharacterController : MonoBehaviour
         {
 
             startDragPos = mouseWorldPosition;
-            Debug.Log("start:" + startDragPos);
+            // Debug.Log("start:" + startDragPos);
         }
         else if (Input.GetMouseButtonUp(0))
         {
@@ -38,15 +42,15 @@ public class CharacterController : MonoBehaviour
             Vector2 startDirection = -1 * (endDragPos - startDragPos).normalized;
             speed = (endDragPos - startDragPos).magnitude * 250;
             rigid.AddForce(startDirection * speed);
-            Debug.Log("End:" + endDragPos);
-            Debug.Log("dir:" + startDirection);
+            //  Debug.Log("End:" + endDragPos);
+            // Debug.Log("dir:" + startDirection);
         }
 
         //  Debug.Log(;
         if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(1))
         {
             rigid.velocity = new Vector3(0, 0, 0);
-            Debug.Log(rigid.velocity);
+            // Debug.Log(rigid.velocity);
         }
 
     }

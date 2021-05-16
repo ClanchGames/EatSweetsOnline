@@ -1,7 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using Photon.Pun;
+using Photon.Realtime;
 using static AdMob;
 
 public class Main : MonoBehaviour
@@ -12,6 +13,12 @@ public class Main : MonoBehaviour
 
     public bool right;
     public bool left;
+
+    public bool isPlayer1Turn = false;
+    public bool isPlayer2Turn = false;
+
+    public GameObject Player1;
+    public GameObject Player2;
     public void Right()
     {
         right = true;
@@ -29,7 +36,16 @@ public class Main : MonoBehaviour
     }
     private void Awake()
     {
-        main = this;
+
+        if (main == null)
+        {
+            main = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
         debug = GetComponent<DebugSystem>();
         //まだセーブファイルが作成されてないとき初期化
         if (SaveSystem.Load() == null)
@@ -52,7 +68,10 @@ public class Main : MonoBehaviour
 
     void Update()
     {
-
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            MatchMaking.matchMake.StartMatchMaking("p1");
+        }
     }
     IEnumerator MainSave()
     {
