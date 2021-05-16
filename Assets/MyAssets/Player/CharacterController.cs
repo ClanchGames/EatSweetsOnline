@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
+using Photon.Realtime;
 
-public class CharacterController : MonoBehaviour
+public class CharacterController : MonoBehaviourPun
 {
     Rigidbody rigid;
     Vector3 mousePosition;
@@ -10,19 +12,21 @@ public class CharacterController : MonoBehaviour
     Vector2 startDragPos;
 
     private float speed;
+    private bool IsMine;
     // Start is called before the first frame update
     void Start()
     {
         rigid = GetComponent<Rigidbody>();
         speed = 500;
+        IsMine = photonView.IsMine;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Main.main.isPlayer1Turn)
+        if (!IsMine)
         {
-
+            return;
         }
         mousePosition = Input.mousePosition;
         mousePosition.z = 10;
