@@ -4,7 +4,7 @@ using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
 
-public class CharacterController : MonoBehaviourPun
+public class CharacterController : MonoBehaviourPunCallbacks
 {
     Rigidbody rigid;
     Vector3 mousePosition;
