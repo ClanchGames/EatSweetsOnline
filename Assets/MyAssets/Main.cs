@@ -173,7 +173,6 @@ public class Main : MonoBehaviour
             if (IsAllPlayerStop)
             {
                 ChangeTurn();
-                Debug.Log("turnplayer:" + TurnPlayer);
                 yield break;
             }
 
