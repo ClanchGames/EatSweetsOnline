@@ -24,6 +24,6 @@ public class DeadZone : MonoBehaviour
     IEnumerator Dead(GameObject player)
     {
         yield return new WaitForSeconds(1f);
-        Destroy(player);
+        player.GetComponent<CharacterController>().Dead();
     }
 }

@@ -26,7 +26,10 @@ public class CharacterController : MonoBehaviourPun
     void Update()
     {
         Debug.Log(gameObject.name + IsMine);
+<<<<<<< HEAD
+=======
         //Ž©•ª‚Ì‚¶‚á‚È‚¢‚È‚çreturn
+>>>>>>> 10bca97da549b3c6f6fd0771dfc0b5c8f852c3c3
         if (!IsMine)
         {
             return;
