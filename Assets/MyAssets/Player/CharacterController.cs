@@ -13,6 +13,7 @@ public class CharacterController : MonoBehaviourPunCallbacks
 
     private float speed;
     private bool IsMine;
+    private bool IsShot;
     // Start is called before the first frame update
     void Start()
     {
@@ -41,6 +42,8 @@ public class CharacterController : MonoBehaviourPunCallbacks
         {
             return;
         }
+        if (IsShot)
+            return;
         mousePosition = Input.mousePosition;
         mousePosition.z = 10;
         mouseWorldPosition = Camera.main.ScreenToWorldPoint(mousePosition);
@@ -61,6 +64,7 @@ public class CharacterController : MonoBehaviourPunCallbacks
             speed = (endDragPos - startDragPos).magnitude * 250;
             rigid.AddForce(startDirection * speed);
             Main.main.CheckPlayerIsMove();
+            IsShot = true;
 
         }
 
