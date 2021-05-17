@@ -109,18 +109,20 @@ public class Main : MonoBehaviourPunCallbacks
     {
         MatchMaking.matchMake.StartMatchMaking("aaa");
         ChangeActive(HomeScreen, ConnectionScreen);
+        ChangeTurn(PlayerNum.Player1);
         photonView.RPC(nameof(ChangeTurn), RpcTarget.AllBuffered, PlayerNum.Player1);
 
     }
 
 
     [PunRPC]
-    public void ChangeTurn(PlayerNum playerNum)
+    private void ChangeTurn(PlayerNum playerNum)
     {
         TurnPlayer = (int)playerNum;
+        Debug.Log(TurnPlayer);
     }
     [PunRPC]
-    public void ChangeTurn()
+    private void ChangeTurn()
     {
         if (TurnPlayer == (int)PlayerNum.Player1)
         {
@@ -174,6 +176,7 @@ public class Main : MonoBehaviourPunCallbacks
             //‘Sˆõ‚ªŽ~‚Ü‚Á‚Ä‚½‚çOK
             if (IsAllPlayerStop)
             {
+                ChangeTurn();
                 photonView.RPC(nameof(ChangeTurn), RpcTarget.AllBuffered);
                 yield break;
             }
