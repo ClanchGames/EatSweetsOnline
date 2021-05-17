@@ -176,6 +176,7 @@ public class Main : MonoBehaviourPunCallbacks
             //‘Sˆõ‚ªŽ~‚Ü‚Á‚Ä‚½‚çOK
             if (IsAllPlayerStop)
             {
+                Debug.Log(IsAllPlayerStop);
                 ChangeTurn();
                 photonView.RPC(nameof(ChangeTurn), RpcTarget.AllBuffered);
                 yield break;
