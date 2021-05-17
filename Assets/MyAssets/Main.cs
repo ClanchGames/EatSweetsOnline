@@ -76,8 +76,7 @@ public class Main : MonoBehaviourPunCallbacks
     }
     void Start()
     {
-        var hashtable = new ExitGames.Client.Photon.Hashtable();
-        hashtable["TurnPlayer"] = 0;
+
     }
 
 
@@ -109,14 +108,17 @@ public class Main : MonoBehaviourPunCallbacks
     {
         MatchMaking.matchMake.StartMatchMaking("aaa");
         ChangeActive(HomeScreen, ConnectionScreen);
-        photonView.RPC(nameof(ChangeTurn), RpcTarget.AllBuffered, PlayerNum.Player1);
-
     }
 
+    public void GameStart()
+    {
+        photonView.RPC(nameof(SetTurn), RpcTarget.AllBuffered, PlayerNum.Player1);
+    }
 
     [PunRPC]
-    private void ChangeTurn(PlayerNum playerNum)
+    private void SetTurn(PlayerNum playerNum)
     {
+        Debug.Log("in");
         TurnPlayer = (int)playerNum;
         Debug.Log(TurnPlayer);
     }

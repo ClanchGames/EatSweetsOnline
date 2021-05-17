@@ -74,7 +74,7 @@ public class MatchMaking : MonoBehaviourPunCallbacks
         }
 
         Main.main.ChangeActive(Main.main.ConnectionScreen, Main.main.BattleScreen);
-
+        Main.main.GameStart();
 
 
     }
