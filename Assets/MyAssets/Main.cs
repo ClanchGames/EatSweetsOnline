@@ -172,8 +172,8 @@ public class Main : MonoBehaviour
             //‘Sˆõ‚ªŽ~‚Ü‚Á‚Ä‚½‚çOK
             if (IsAllPlayerStop)
             {
-                Debug.Log("in");
                 ChangeTurn();
+                Debug.Log("turnplayer:" + TurnPlayer);
                 yield break;
             }
 
