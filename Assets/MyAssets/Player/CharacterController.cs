@@ -29,6 +29,7 @@ public class CharacterController : MonoBehaviourPunCallbacks
         Debug.Log("ismaster:" + Main.main.isMaster);
         Debug.Log("turnplayer:" + Main.main.TurnPlayer);
         Debug.Log("isshot:" + IsShot);
+        Debug.Log("ismine:" + IsMine);
 
         //Ž©•ª‚Ì‚¶‚á‚È‚¢‚È‚çreturn
         if (!IsMine)
