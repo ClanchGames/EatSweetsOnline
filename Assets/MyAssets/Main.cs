@@ -6,7 +6,7 @@ using Photon.Realtime;
 using static AdMob;
 using System.Linq;
 
-public class Main : MonoBehaviour
+public class Main : MonoBehaviourPunCallbacks
 {
     public static Main main;
     DebugSystem debug;
@@ -23,6 +23,8 @@ public class Main : MonoBehaviour
         Player2 = 2,
     }
     public int TurnPlayer { get; set; } = 0;
+
+
 
 
     public GameObject Player1 { get; set; }
@@ -74,7 +76,8 @@ public class Main : MonoBehaviour
     }
     void Start()
     {
-        //StartCoroutine("MainSave", 1f);
+        var hashtable = new ExitGames.Client.Photon.Hashtable();
+        hashtable["TurnPlayer"] = 0;
     }
 
 
@@ -106,18 +109,17 @@ public class Main : MonoBehaviour
     {
         MatchMaking.matchMake.StartMatchMaking("aaa");
         ChangeActive(HomeScreen, ConnectionScreen);
-        ChangeTurn(PlayerNum.Player1);
+        photonView.RPC(nameof(ChangeTurn), RpcTarget.AllBuffered, PlayerNum.Player1);
 
     }
 
-    /// <summary>
-    /// ターン切り替え指定
-    /// </summary>
-    /// <param name="playerNum"></param>
+
+    [PunRPC]
     public void ChangeTurn(PlayerNum playerNum)
     {
         TurnPlayer = (int)playerNum;
     }
+    [PunRPC]
     public void ChangeTurn()
     {
         if (TurnPlayer == (int)PlayerNum.Player1)
@@ -172,7 +174,7 @@ public class Main : MonoBehaviour
             //全員が止まってたらOK
             if (IsAllPlayerStop)
             {
-                ChangeTurn();
+                photonView.RPC(nameof(ChangeTurn), RpcTarget.AllBuffered);
                 yield break;
             }
 
