@@ -14,7 +14,7 @@ public class TurnDisplay : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Main.main.TurnPlayer == 1)
+        if (Main.main.TurnPlayer == Main.PlayerNum.Player1)
         {
             if (Main.main.isMaster)
             {
@@ -25,7 +25,7 @@ public class TurnDisplay : MonoBehaviour
                 turnDisplay.text = "Opponent's turn";
             }
         }
-        else if (Main.main.TurnPlayer == 2)
+        else if (Main.main.TurnPlayer == Main.PlayerNum.Player2)
         {
             if (Main.main.isMaster)
             {
