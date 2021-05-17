@@ -14,6 +14,7 @@ public class TurnDisplay : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Debug.Log("turnplayer:" + Main.main.TurnPlayer);
         if (Main.main.TurnPlayer == 1)
         {
             if (Main.main.isMaster)

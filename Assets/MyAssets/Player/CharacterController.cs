@@ -25,7 +25,7 @@ public class CharacterController : MonoBehaviourPun
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(gameObject.name + IsMine);
+        Debug.Log("ismaster:" + Main.main.isMaster);
         //Ž©•ª‚Ì‚¶‚á‚È‚¢‚È‚çreturn
         if (!IsMine)
         {
