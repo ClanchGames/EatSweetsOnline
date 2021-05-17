@@ -26,9 +26,9 @@ public class CharacterController : MonoBehaviourPunCallbacks
     // Update is called once per frame
     void Update()
     {
-        Debug.Log("ismaster:" + Main.main.isMaster);
-        Debug.Log("turnplayer:" + Main.main.TurnPlayer);
-        Debug.Log("isshot:" + IsShot);
+        //  Debug.Log("ismaster:" + Main.main.isMaster);
+        // Debug.Log("turnplayer:" + Main.main.TurnPlayer);
+        // Debug.Log("isshot:" + IsShot);
 
         //Ž©•ª‚Ì‚¶‚á‚È‚¢‚È‚çreturn
         if (!IsMine)
@@ -83,6 +83,12 @@ public class CharacterController : MonoBehaviourPunCallbacks
     public void Dead()
     {
         Main.main.AllPlayers.Remove(gameObject);
+        StartCoroutine(DestroyCoroutine());
+    }
+
+    IEnumerator DestroyCoroutine()
+    {
+        yield return new WaitForSeconds(1f);
         Destroy(gameObject);
     }
 }

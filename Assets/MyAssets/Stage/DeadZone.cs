@@ -19,11 +19,7 @@ public class DeadZone : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         Debug.Log("dead");
-        StartCoroutine(Dead(collision.gameObject));
+        collision.gameObject.GetComponent<CharacterController>().Dead();
     }
-    IEnumerator Dead(GameObject player)
-    {
-        yield return new WaitForSeconds(1f);
-        player.GetComponent<CharacterController>().Dead();
-    }
+
 }
