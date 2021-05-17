@@ -165,21 +165,16 @@ public class Main : MonoBehaviourPunCallbacks
         {
             yield return new WaitForSeconds(0.5f);
             a++;
-            bool IsAllPlayerStop = false;
+            bool IsAllPlayerStop = true;
             foreach (var player in AllPlayers)
             {
-                Debug.Log("Player name:" + player.name);
+
                 Rigidbody rb = player.GetComponent<Rigidbody>();
-                if (rb.velocity == Vector3.zero)
-                {
-                    IsAllPlayerStop = true;
-                }
-                else
+                if (rb.velocity != Vector3.zero)
                 {
                     IsAllPlayerStop = false;
                 }
             }
-
             //‘Sˆõ‚ªŽ~‚Ü‚Á‚Ä‚½‚çOK
             if (IsAllPlayerStop)
             {
