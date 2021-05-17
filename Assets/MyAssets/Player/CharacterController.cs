@@ -37,11 +37,11 @@ public class CharacterController : MonoBehaviourPunCallbacks
         }
 
         //©•ª‚Ìƒ^[ƒ“‚¶‚á‚È‚¢‚È‚çreturn
-        if (Main.main.isMaster && Main.main.TurnPlayer != 1)
+        if (Main.main.isMaster && Main.main.TurnPlayer != Main.PlayerNum.Player1)
         {
             return;
         }
-        if (!Main.main.isMaster && Main.main.TurnPlayer != 2)
+        if (!Main.main.isMaster && Main.main.TurnPlayer != Main.PlayerNum.Player1)
         {
             return;
         }

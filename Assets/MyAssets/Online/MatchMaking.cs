@@ -67,9 +67,9 @@ public class MatchMaking : MonoBehaviourPunCallbacks
         }
         else
         {
-            var position = new Vector3(1, 1, 0);
+            /*var position = new Vector3(1, 1, 0);
             GameObject player2 = PhotonNetwork.Instantiate("Player2", position, Quaternion.identity);
-            Main.main.Player2 = player2;
+            Main.main.Player2 = player2;*/
             Main.main.isMaster = false;
         }
 

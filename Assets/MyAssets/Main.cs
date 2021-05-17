@@ -22,7 +22,7 @@ public class Main : MonoBehaviourPunCallbacks
         Player1 = 1,
         Player2 = 2,
     }
-    public int TurnPlayer { get; set; } = 0;
+    public PlayerNum TurnPlayer { get; set; }
 
 
 
@@ -119,22 +119,23 @@ public class Main : MonoBehaviourPunCallbacks
     private void SetTurn(PlayerNum playerNum)
     {
         Debug.Log("in");
-        TurnPlayer = (int)playerNum;
+        TurnPlayer = playerNum;
         Debug.Log(TurnPlayer);
     }
     [PunRPC]
     private void ChangeTurnAuto()
     {
-        if (TurnPlayer == (int)PlayerNum.Player1)
+        if (TurnPlayer == PlayerNum.Player1)
         {
-            TurnPlayer = (int)PlayerNum.Player2;
+            TurnPlayer = PlayerNum.Player2;
         }
-        else if (TurnPlayer == (int)PlayerNum.Player2)
+        else if (TurnPlayer == PlayerNum.Player2)
         {
-            TurnPlayer = (int)PlayerNum.Player1;
+            TurnPlayer = PlayerNum.Player1;
         }
 
         Debug.Log("trunplayer change:" + TurnPlayer);
+        GeneratePlayer();
     }
 
     /// <summary>
@@ -184,11 +185,36 @@ public class Main : MonoBehaviourPunCallbacks
             {
                 Debug.Log(IsAllPlayerStop);
                 photonView.RPC(nameof(ChangeTurnAuto), RpcTarget.AllBuffered);
+
                 yield break;
             }
 
         }
     }
+
+    //playerを生成
+    public void GeneratePlayer()
+    {
+        //スタート地点
+        Vector3 position = new Vector3(0, -10, 0);
+        if (TurnPlayer == PlayerNum.Player1)
+        {
+            if (isMaster)
+            {
+                GameObject player1 = PhotonNetwork.Instantiate("Player1", position, Quaternion.identity);
+            }
+        }
+        else if (TurnPlayer == PlayerNum.Player2)
+        {
+            if (!isMaster)
+            {
+                GameObject player2 = PhotonNetwork.Instantiate("Player2", position, Quaternion.identity);
+            }
+        }
+
+    }
+    //プレイヤー生成
+    //  場所指定
 
 
 
