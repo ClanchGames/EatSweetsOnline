@@ -19,6 +19,7 @@ public class Main : MonoBehaviourPunCallbacks
 
     public enum PlayerNum
     {
+        None = 0,
         Player1 = 1,
         Player2 = 2,
     }
@@ -32,6 +33,8 @@ public class Main : MonoBehaviourPunCallbacks
         }
     }
 
+    public int timeLimit { get; set; }
+    private IEnumerator countDown;
 
 
 
@@ -115,39 +118,6 @@ public class Main : MonoBehaviourPunCallbacks
         ChangeActive(HomeScreen, ConnectionScreen);
     }
 
-    public void GameStart()
-    {
-        photonView.RPC(nameof(SetTurn), RpcTarget.AllBuffered, PlayerNum.Player1);
-    }
-
-    [PunRPC]
-    private void SetTurn(PlayerNum playerNum)
-    {
-        Debug.Log("in");
-        TurnPlayer = playerNum;
-        Debug.Log(TurnPlayer);
-    }
-    [PunRPC]
-    private void ChangeTurnAuto()
-    {
-        if (TurnPlayer == PlayerNum.Player1)
-        {
-            TurnPlayer = PlayerNum.Player2;
-        }
-        else if (TurnPlayer == PlayerNum.Player2)
-        {
-            TurnPlayer = PlayerNum.Player1;
-        }
-
-        Debug.Log("trunplayer change:" + TurnPlayer);
-        GeneratePlayer();
-    }
-
-    /// <summary>
-    /// ÉXÉNÉäÅ[ÉìÇÃêÿÇËë÷Ç¶Ç∆Ç©
-    /// </summary>
-    /// <param name="falseObj"></param>
-    /// <param name="trueObj"></param>
     public void ChangeActive(GameObject falseObj, GameObject trueObj)
     {
         if (falseObj.activeSelf)
@@ -155,14 +125,56 @@ public class Main : MonoBehaviourPunCallbacks
         if (!trueObj.activeSelf)
             trueObj.SetActive(true);
     }
+    public void GameStart()
+    {
+        photonView.RPC(nameof(ChangeTurn), RpcTarget.AllBuffered);
+    }
+
+    [PunRPC]
+    private void ChangeTurn()
+    {
+        switch (TurnPlayer)
+        {
+            case PlayerNum.None:
+                TurnPlayer = PlayerNum.Player1;
+                break;
+            case PlayerNum.Player1:
+                TurnPlayer = PlayerNum.Player2;
+                break;
+            case PlayerNum.Player2:
+                TurnPlayer = PlayerNum.Player1;
+                break;
+        }
+        countDown = null;
+        countDown = CountDown();
+        StartCoroutine(countDown);
+
+    }
+
+
+    public IEnumerator CountDown()
+    {
+        timeLimit = 10;
+        while (timeLimit > 0)
+        {
+            yield return new WaitForSeconds(1f);
+            timeLimit--;
+            Debug.Log("limit" + timeLimit);
+        }
+        photonView.RPC(nameof(ChangeTurn), RpcTarget.AllBuffered);
+    }
+
+
     public void AddPlayerToList(GameObject player)
     {
         AllPlayers.Add(player);
     }
-    public void CheckPlayerIsMove()
+    public void AfterShot()
     {
+        StopCoroutine(countDown);
         StartCoroutine(CheckPlayerIsMoveCoroutine());
     }
+
     IEnumerator CheckPlayerIsMoveCoroutine()
     {
         int a = 0;
@@ -184,7 +196,7 @@ public class Main : MonoBehaviourPunCallbacks
             if (IsAllPlayerStop)
             {
                 Debug.Log(IsAllPlayerStop);
-                photonView.RPC(nameof(ChangeTurnAuto), RpcTarget.AllBuffered);
+                photonView.RPC(nameof(ChangeTurn), RpcTarget.AllBuffered);
 
                 yield break;
             }
@@ -218,7 +230,10 @@ public class Main : MonoBehaviourPunCallbacks
 
 
 
+    public void GameSet()
+    {
 
+    }
 
 
 

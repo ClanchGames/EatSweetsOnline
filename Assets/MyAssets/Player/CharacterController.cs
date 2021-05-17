@@ -26,10 +26,7 @@ public class CharacterController : MonoBehaviourPunCallbacks
     // Update is called once per frame
     void Update()
     {
-        Debug.Log("ismaster:" + Main.main.isMaster);
-        Debug.Log("turnplayer:" + Main.main.TurnPlayer);
-        Debug.Log("isshot:" + IsShot);
-        Debug.Log("ismine:" + gameObject.name + IsMine);
+        Debug.Log("isyourturn:" + Main.main.IsYourTurn);
 
         //Ž©•ª‚Ì‚¶‚á‚È‚¢‚È‚çreturn
         if (!IsMine)
@@ -65,7 +62,7 @@ public class CharacterController : MonoBehaviourPunCallbacks
             Vector2 startDirection = -1 * (endDragPos - startDragPos).normalized;
             speed = (endDragPos - startDragPos).magnitude * 250;
             rigid.AddForce(startDirection * speed);
-            Main.main.CheckPlayerIsMove();
+            Main.main.AfterShot();
             IsShot = true;
 
         }
@@ -89,5 +86,9 @@ public class CharacterController : MonoBehaviourPunCallbacks
     {
         yield return new WaitForSeconds(1f);
         Destroy(gameObject);
+    }
+    private void OnDestroy()
+    {
+        StopCoroutine(DestroyCoroutine());
     }
 }
