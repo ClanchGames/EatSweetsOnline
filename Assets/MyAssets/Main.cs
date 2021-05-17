@@ -15,20 +15,32 @@ public class Main : MonoBehaviourPunCallbacks
     public bool right;
     public bool left;
 
+    public bool IsGameStart { get; set; }
+
     public bool isMaster { get; set; }
+    public int Player1Life { get; set; } = 2;
+    public int Player2Life { get; set; } = 2;
 
     public enum PlayerNum
     {
+        None = 0,
         Player1 = 1,
         Player2 = 2,
     }
     public PlayerNum TurnPlayer { get; set; }
 
+    public bool IsYourTurn
+    {
+        get
+        {
+            return isMaster && TurnPlayer == PlayerNum.Player1 || !isMaster && TurnPlayer == PlayerNum.Player2;
+        }
+    }
+
+    public int timeLimit { get; set; }
+    private IEnumerator countDown;
 
 
-
-    public GameObject Player1 { get; set; }
-    public GameObject Player2 { get; set; }
 
     public GameObject HomeScreen;
     public GameObject ConnectionScreen;
@@ -87,8 +99,13 @@ public class Main : MonoBehaviourPunCallbacks
             MatchMaking.matchMake.StartMatchMaking("aaa");
         }
 
-
-
+        if (IsGameStart)
+        {
+            if (Player1Life <= 0 || Player2Life <= 0)
+            {
+                GameSet();
+            }
+        }
 
     }
     IEnumerator MainSave()
@@ -110,39 +127,6 @@ public class Main : MonoBehaviourPunCallbacks
         ChangeActive(HomeScreen, ConnectionScreen);
     }
 
-    public void GameStart()
-    {
-        photonView.RPC(nameof(SetTurn), RpcTarget.AllBuffered, PlayerNum.Player1);
-    }
-
-    [PunRPC]
-    private void SetTurn(PlayerNum playerNum)
-    {
-        Debug.Log("in");
-        TurnPlayer = playerNum;
-        Debug.Log(TurnPlayer);
-    }
-    [PunRPC]
-    private void ChangeTurnAuto()
-    {
-        if (TurnPlayer == PlayerNum.Player1)
-        {
-            TurnPlayer = PlayerNum.Player2;
-        }
-        else if (TurnPlayer == PlayerNum.Player2)
-        {
-            TurnPlayer = PlayerNum.Player1;
-        }
-
-        Debug.Log("trunplayer change:" + TurnPlayer);
-        GeneratePlayer();
-    }
-
-    /// <summary>
-    /// スクリーンの切り替えとか
-    /// </summary>
-    /// <param name="falseObj"></param>
-    /// <param name="trueObj"></param>
     public void ChangeActive(GameObject falseObj, GameObject trueObj)
     {
         if (falseObj.activeSelf)
@@ -150,14 +134,57 @@ public class Main : MonoBehaviourPunCallbacks
         if (!trueObj.activeSelf)
             trueObj.SetActive(true);
     }
+    public void GameStart()
+    {
+        IsGameStart = true;
+        photonView.RPC(nameof(ChangeTurn), RpcTarget.AllBuffered);
+    }
+
+    [PunRPC]
+    private void ChangeTurn()
+    {
+        switch (TurnPlayer)
+        {
+            case PlayerNum.None:
+                TurnPlayer = PlayerNum.Player1;
+                break;
+            case PlayerNum.Player1:
+                TurnPlayer = PlayerNum.Player2;
+                break;
+            case PlayerNum.Player2:
+                TurnPlayer = PlayerNum.Player1;
+                break;
+        }
+        countDown = null;
+        countDown = CountDown();
+        StartCoroutine(countDown);
+
+    }
+
+
+    public IEnumerator CountDown()
+    {
+        timeLimit = 10;
+        while (timeLimit > 0)
+        {
+            yield return new WaitForSeconds(1f);
+            timeLimit--;
+            Debug.Log("limit" + timeLimit);
+        }
+        photonView.RPC(nameof(ChangeTurn), RpcTarget.AllBuffered);
+    }
+
+
     public void AddPlayerToList(GameObject player)
     {
         AllPlayers.Add(player);
     }
-    public void CheckPlayerIsMove()
+    public void AfterShot()
     {
+        StopCoroutine(countDown);
         StartCoroutine(CheckPlayerIsMoveCoroutine());
     }
+
     IEnumerator CheckPlayerIsMoveCoroutine()
     {
         int a = 0;
@@ -179,7 +206,7 @@ public class Main : MonoBehaviourPunCallbacks
             if (IsAllPlayerStop)
             {
                 Debug.Log(IsAllPlayerStop);
-                photonView.RPC(nameof(ChangeTurnAuto), RpcTarget.AllBuffered);
+                photonView.RPC(nameof(ChangeTurn), RpcTarget.AllBuffered);
 
                 yield break;
             }
@@ -208,12 +235,27 @@ public class Main : MonoBehaviourPunCallbacks
         }
 
     }
-    //プレイヤー生成
-    //  場所指定
+
+    public void PlayerDead(PlayerNum player, GameObject playerObject)
+    {
+        if (player == PlayerNum.Player1)
+        {
+            Player1Life--;
+        }
+        else if (player == PlayerNum.Player2)
+        {
+            Player2Life--;
+        }
+        AllPlayers.Remove(playerObject);
+    }
 
 
 
-
+    public void GameSet()
+    {
+        IsGameStart = false;
+        Debug.Log("game set");
+    }
 
 
 

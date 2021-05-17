@@ -6,6 +6,8 @@ using Photon.Realtime;
 
 public class CharacterController : MonoBehaviourPunCallbacks
 {
+    Main.PlayerNum playerNum;
+
     Rigidbody rigid;
     Vector3 mousePosition;
     Vector2 mouseWorldPosition;
@@ -17,6 +19,15 @@ public class CharacterController : MonoBehaviourPunCallbacks
     // Start is called before the first frame update
     void Start()
     {
+        if (Main.main.isMaster)
+        {
+            playerNum = Main.PlayerNum.Player1;
+        }
+        else
+        {
+            playerNum = Main.PlayerNum.Player2;
+        }
+
         rigid = GetComponent<Rigidbody>();
         speed = 500;
         IsMine = photonView.IsMine;
@@ -26,10 +37,7 @@ public class CharacterController : MonoBehaviourPunCallbacks
     // Update is called once per frame
     void Update()
     {
-        Debug.Log("ismaster:" + Main.main.isMaster);
-        Debug.Log("turnplayer:" + Main.main.TurnPlayer);
-        Debug.Log("isshot:" + IsShot);
-        Debug.Log("ismine:" + gameObject.name + IsMine);
+        Debug.Log("isyourturn:" + Main.main.IsYourTurn);
 
         //é©ï™ÇÃÇ∂Ç·Ç»Ç¢Ç»ÇÁreturn
         if (!IsMine)
@@ -38,14 +46,12 @@ public class CharacterController : MonoBehaviourPunCallbacks
         }
 
         //é©ï™ÇÃÉ^Å[ÉìÇ∂Ç·Ç»Ç¢Ç»ÇÁreturn
-        if (Main.main.isMaster && Main.main.TurnPlayer != Main.PlayerNum.Player1)
+        if (!Main.main.IsYourTurn)
         {
             return;
         }
-        if (!Main.main.isMaster && Main.main.TurnPlayer != Main.PlayerNum.Player2)
-        {
-            return;
-        }
+
+        //ë≈ÇøèIÇÌÇ¡ÇΩÇÁÇ‡Ç§ë≈ÇƒÇ»Ç¢
         if (IsShot)
             return;
         mousePosition = Input.mousePosition;
@@ -67,7 +73,7 @@ public class CharacterController : MonoBehaviourPunCallbacks
             Vector2 startDirection = -1 * (endDragPos - startDragPos).normalized;
             speed = (endDragPos - startDragPos).magnitude * 250;
             rigid.AddForce(startDirection * speed);
-            Main.main.CheckPlayerIsMove();
+            Main.main.AfterShot();
             IsShot = true;
 
         }
@@ -83,7 +89,7 @@ public class CharacterController : MonoBehaviourPunCallbacks
 
     public void Dead()
     {
-        Main.main.AllPlayers.Remove(gameObject);
+        Main.main.PlayerDead(playerNum, gameObject);
         StartCoroutine(DestroyCoroutine());
     }
 
@@ -91,5 +97,9 @@ public class CharacterController : MonoBehaviourPunCallbacks
     {
         yield return new WaitForSeconds(1f);
         Destroy(gameObject);
+    }
+    private void OnDestroy()
+    {
+        StopCoroutine(DestroyCoroutine());
     }
 }
