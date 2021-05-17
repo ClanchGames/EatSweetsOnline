@@ -6,6 +6,8 @@ using Photon.Realtime;
 
 public class CharacterController : MonoBehaviourPunCallbacks
 {
+    Main.PlayerNum playerNum;
+
     Rigidbody rigid;
     Vector3 mousePosition;
     Vector2 mouseWorldPosition;
@@ -17,6 +19,15 @@ public class CharacterController : MonoBehaviourPunCallbacks
     // Start is called before the first frame update
     void Start()
     {
+        if (Main.main.isMaster)
+        {
+            playerNum = Main.PlayerNum.Player1;
+        }
+        else
+        {
+            playerNum = Main.PlayerNum.Player2;
+        }
+
         rigid = GetComponent<Rigidbody>();
         speed = 500;
         IsMine = photonView.IsMine;
@@ -78,7 +89,7 @@ public class CharacterController : MonoBehaviourPunCallbacks
 
     public void Dead()
     {
-        Main.main.AllPlayers.Remove(gameObject);
+        Main.main.PlayerDead(playerNum, gameObject);
         StartCoroutine(DestroyCoroutine());
     }
 

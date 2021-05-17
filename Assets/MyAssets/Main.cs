@@ -15,7 +15,11 @@ public class Main : MonoBehaviourPunCallbacks
     public bool right;
     public bool left;
 
+    public bool IsGameStart { get; set; }
+
     public bool isMaster { get; set; }
+    public int Player1Life { get; set; } = 2;
+    public int Player2Life { get; set; } = 2;
 
     public enum PlayerNum
     {
@@ -95,8 +99,13 @@ public class Main : MonoBehaviourPunCallbacks
             MatchMaking.matchMake.StartMatchMaking("aaa");
         }
 
-
-
+        if (IsGameStart)
+        {
+            if (Player1Life <= 0 || Player2Life <= 0)
+            {
+                GameSet();
+            }
+        }
 
     }
     IEnumerator MainSave()
@@ -127,6 +136,7 @@ public class Main : MonoBehaviourPunCallbacks
     }
     public void GameStart()
     {
+        IsGameStart = true;
         photonView.RPC(nameof(ChangeTurn), RpcTarget.AllBuffered);
     }
 
@@ -225,14 +235,26 @@ public class Main : MonoBehaviourPunCallbacks
         }
 
     }
-    //プレイヤー生成
-    //  場所指定
+
+    public void PlayerDead(PlayerNum player, GameObject playerObject)
+    {
+        if (player == PlayerNum.Player1)
+        {
+            Player1Life--;
+        }
+        else if (player == PlayerNum.Player2)
+        {
+            Player2Life--;
+        }
+        AllPlayers.Remove(playerObject);
+    }
 
 
 
     public void GameSet()
     {
-
+        IsGameStart = false;
+        Debug.Log("game set");
     }
 
 
