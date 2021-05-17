@@ -147,7 +147,10 @@ public class Main : MonoBehaviourPunCallbacks
         if (!trueObj.activeSelf)
             trueObj.SetActive(true);
     }
-
+    public void AddPlayerToList(GameObject player)
+    {
+        AllPlayers.Add(player);
+    }
     public void CheckPlayerIsMove()
     {
         StartCoroutine(CheckPlayerIsMoveCoroutine());
@@ -162,6 +165,7 @@ public class Main : MonoBehaviourPunCallbacks
             bool IsAllPlayerStop = false;
             foreach (var player in AllPlayers)
             {
+                Debug.Log("Player name:" + player.name);
                 Rigidbody rb = player.GetComponent<Rigidbody>();
                 if (rb.velocity == Vector3.zero)
                 {
