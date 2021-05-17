@@ -19,13 +19,25 @@ public class CharacterController : MonoBehaviourPun
         rigid = GetComponent<Rigidbody>();
         speed = 500;
         IsMine = photonView.IsMine;
+        Main.main.AllPlayers.Add(gameObject);
     }
 
     // Update is called once per frame
     void Update()
     {
         Debug.Log(gameObject.name + IsMine);
+        //自分のじゃないならreturn
         if (!IsMine)
+        {
+            return;
+        }
+
+        //自分のターンじゃないならreturn
+        if (Main.main.isMaster && Main.main.TurnPlayer != 1)
+        {
+            return;
+        }
+        if (!Main.main.isMaster && Main.main.TurnPlayer != 2)
         {
             return;
         }
@@ -33,30 +45,37 @@ public class CharacterController : MonoBehaviourPun
         mousePosition.z = 10;
         mouseWorldPosition = Camera.main.ScreenToWorldPoint(mousePosition);
 
-        // Debug.Log(mouseWorldPosition);
-        // Debug.Log(mousePosition);
+
+        //引っ張り始める
         if (Input.GetMouseButtonDown(0))
         {
 
             startDragPos = mouseWorldPosition;
-            // Debug.Log("start:" + startDragPos);
+
         }
+        //離す
         else if (Input.GetMouseButtonUp(0))
         {
             Vector2 endDragPos = mouseWorldPosition;
             Vector2 startDirection = -1 * (endDragPos - startDragPos).normalized;
             speed = (endDragPos - startDragPos).magnitude * 250;
             rigid.AddForce(startDirection * speed);
-            //  Debug.Log("End:" + endDragPos);
-            // Debug.Log("dir:" + startDirection);
+            Main.main.CheckPlayerIsMove();
+
         }
 
-        //  Debug.Log(;
+
         if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(1))
         {
+            //完全に止める
             rigid.velocity = new Vector3(0, 0, 0);
-            // Debug.Log(rigid.velocity);
         }
 
+    }
+
+    public void Dead()
+    {
+        Main.main.AllPlayers.Remove(gameObject);
+        Destroy(gameObject);
     }
 }

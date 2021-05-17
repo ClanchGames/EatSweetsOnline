@@ -4,6 +4,7 @@ using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
 using static AdMob;
+using System.Linq;
 
 public class Main : MonoBehaviour
 {
@@ -15,8 +16,14 @@ public class Main : MonoBehaviour
     public bool left;
 
     public bool isMaster { get; set; }
-    public bool isPlayer1Turn { get; set; }
-    public bool isPlayer2Turn { get; set; }
+
+    public enum PlayerNum
+    {
+        Player1 = 1,
+        Player2 = 2,
+    }
+    public int TurnPlayer { get; set; } = 0;
+
 
     public GameObject Player1 { get; set; }
     public GameObject Player2 { get; set; }
@@ -24,6 +31,8 @@ public class Main : MonoBehaviour
     public GameObject HomeScreen;
     public GameObject ConnectionScreen;
     public GameObject BattleScreen;
+
+    public List<GameObject> AllPlayers = new List<GameObject>();
     public void Right()
     {
         right = true;
@@ -75,6 +84,10 @@ public class Main : MonoBehaviour
         {
             MatchMaking.matchMake.StartMatchMaking("aaa");
         }
+
+
+
+
     }
     IEnumerator MainSave()
     {
@@ -86,14 +99,37 @@ public class Main : MonoBehaviour
             yield return new WaitForSeconds(1f);
         }
     }
+    /// <summary>
+    /// ゲームスタート
+    /// </summary>
     public void Play()
     {
         MatchMaking.matchMake.StartMatchMaking("aaa");
         ChangeActive(HomeScreen, ConnectionScreen);
+        ChangeTurn(PlayerNum.Player1);
 
     }
 
+    /// <summary>
+    /// ターン切り替え指定
+    /// </summary>
+    /// <param name="playerNum"></param>
+    public void ChangeTurn(PlayerNum playerNum)
+    {
+        TurnPlayer = (int)playerNum;
+    }
+    public void ChangeTurn()
+    {
+        if (TurnPlayer == (int)PlayerNum.Player1)
+        {
+            TurnPlayer = (int)PlayerNum.Player2;
+        }
+        else if (TurnPlayer == (int)PlayerNum.Player2)
+        {
+            TurnPlayer = (int)PlayerNum.Player1;
+        }
 
+    }
 
     /// <summary>
     /// スクリーンの切り替えとか
@@ -108,7 +144,41 @@ public class Main : MonoBehaviour
             trueObj.SetActive(true);
     }
 
+    public void CheckPlayerIsMove()
+    {
+        StartCoroutine(CheckPlayerIsMoveCoroutine());
+    }
+    IEnumerator CheckPlayerIsMoveCoroutine()
+    {
+        int a = 0;
+        while (a < 1000000)
+        {
+            yield return new WaitForSeconds(0.5f);
+            a++;
+            bool IsAllPlayerStop = false;
+            foreach (var player in AllPlayers)
+            {
+                Rigidbody rb = player.GetComponent<Rigidbody>();
+                if (rb.velocity == Vector3.zero)
+                {
+                    IsAllPlayerStop = true;
+                }
+                else
+                {
+                    IsAllPlayerStop = false;
+                }
+            }
 
+            //全員が止まってたらOK
+            if (IsAllPlayerStop)
+            {
+                Debug.Log("in");
+                ChangeTurn();
+                yield break;
+            }
+
+        }
+    }
 
 
 
