@@ -29,7 +29,7 @@ public class CharacterController : MonoBehaviourPunCallbacks
         Debug.Log("ismaster:" + Main.main.isMaster);
         Debug.Log("turnplayer:" + Main.main.TurnPlayer);
         Debug.Log("isshot:" + IsShot);
-        Debug.Log("ismine:" + IsMine);
+        Debug.Log("ismine:" + gameObject.name + IsMine);
 
         //Ž©•ª‚Ì‚¶‚á‚È‚¢‚È‚çreturn
         if (!IsMine)
@@ -42,7 +42,7 @@ public class CharacterController : MonoBehaviourPunCallbacks
         {
             return;
         }
-        if (!Main.main.isMaster && Main.main.TurnPlayer != Main.PlayerNum.Player1)
+        if (!Main.main.isMaster && Main.main.TurnPlayer != Main.PlayerNum.Player2)
         {
             return;
         }
