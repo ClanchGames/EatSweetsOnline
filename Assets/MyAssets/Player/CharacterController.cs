@@ -38,14 +38,12 @@ public class CharacterController : MonoBehaviourPunCallbacks
         }
 
         //©•ª‚Ìƒ^[ƒ“‚¶‚á‚È‚¢‚È‚çreturn
-        if (Main.main.isMaster && Main.main.TurnPlayer != Main.PlayerNum.Player1)
+        if (!Main.main.IsYourTurn)
         {
             return;
         }
-        if (!Main.main.isMaster && Main.main.TurnPlayer != Main.PlayerNum.Player2)
-        {
-            return;
-        }
+
+        //‘Å‚¿I‚í‚Á‚½‚ç‚à‚¤‘Å‚Ä‚È‚¢
         if (IsShot)
             return;
         mousePosition = Input.mousePosition;

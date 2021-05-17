@@ -24,11 +24,16 @@ public class Main : MonoBehaviourPunCallbacks
     }
     public PlayerNum TurnPlayer { get; set; }
 
+    public bool IsYourTurn
+    {
+        get
+        {
+            return isMaster && TurnPlayer == PlayerNum.Player1 || !isMaster && TurnPlayer == PlayerNum.Player2;
+        }
+    }
 
 
 
-    public GameObject Player1 { get; set; }
-    public GameObject Player2 { get; set; }
 
     public GameObject HomeScreen;
     public GameObject ConnectionScreen;
