@@ -122,7 +122,7 @@ public class Main : MonoBehaviourPunCallbacks
         Debug.Log(TurnPlayer);
     }
     [PunRPC]
-    private void ChangeTurn()
+    private void ChangeTurnAuto()
     {
         if (TurnPlayer == (int)PlayerNum.Player1)
         {
@@ -177,8 +177,8 @@ public class Main : MonoBehaviourPunCallbacks
             if (IsAllPlayerStop)
             {
                 Debug.Log(IsAllPlayerStop);
-                ChangeTurn();
-                photonView.RPC(nameof(ChangeTurn), RpcTarget.AllBuffered);
+                ChangeTurnAuto();
+                photonView.RPC(nameof(ChangeTurnAuto), RpcTarget.AllBuffered);
                 yield break;
             }
 
