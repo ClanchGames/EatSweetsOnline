@@ -216,9 +216,9 @@ public class Main : MonoBehaviourPunCallbacks
         {
             yield return new WaitForSeconds(0.3f);
             a++;
-            if (playerNum == PlayerNum.Player1 && !IsP1Stop)
+            IsP1Stop = true;
+            if (playerNum == PlayerNum.Player1)
             {
-                IsP1Stop = true;
                 if (P1Objects.Count > 0)
                 {
                     foreach (var p1 in P1Objects)
@@ -230,15 +230,15 @@ public class Main : MonoBehaviourPunCallbacks
                         }
                     }
                 }
-
                 if (IsP1Stop)
                 {
                     photonView.RPC(nameof(ConfirmStop), RpcTarget.AllBuffered, (int)PlayerNum.Player1);
                 }
             }
+
+            IsP2Stop = true;
             if (playerNum == PlayerNum.Player2)
             {
-                IsP2Stop = true;
                 if (P1Objects.Count > 0)
                 {
                     foreach (var p2 in P2Objects)
