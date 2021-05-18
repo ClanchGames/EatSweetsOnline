@@ -209,7 +209,11 @@ public class Main : MonoBehaviourPunCallbacks
             {
 
                 Rigidbody rb = player.GetComponent<Rigidbody>();
-                if (rb.velocity.magnitude <= 0.5)
+                /*if (rb.velocity.magnitude >= 0.5)
+                {
+                    IsAllPlayerStop = false;
+                }*/
+                if (!rb.IsSleeping())
                 {
                     IsAllPlayerStop = false;
                 }
