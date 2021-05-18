@@ -182,7 +182,7 @@ public class Main : MonoBehaviourPunCallbacks
     {
         TurnPlayer = (PlayerNum)Enum.ToObject(typeof(PlayerNum), num);
 
-        //ターンプレイや～になった人はプレイヤー生成
+        //ターンプレイヤーになった人はプレイヤー生成
         if (TurnPlayer == playerNum)
         {
             GeneratePlayer();
