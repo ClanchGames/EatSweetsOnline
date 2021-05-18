@@ -127,11 +127,13 @@ public class Main : MonoBehaviourPunCallbacks
     /// </summary>
     public void Play()
     {
+        IsGameStart = true;
         MatchMaking.matchMake.StartMatchMaking("aaa");
         ChangeActive(HomeScreen, ConnectionScreen);
-        ResetAndInit();
+        ResetGame();
     }
 
+    [PunRPC]
     public void ChangeActive(GameObject falseObj, GameObject trueObj)
     {
         if (falseObj.activeSelf)
@@ -139,9 +141,10 @@ public class Main : MonoBehaviourPunCallbacks
         if (!trueObj.activeSelf)
             trueObj.SetActive(true);
     }
+
     public void GameStart()
     {
-        IsGameStart = true;
+        photonView.RPC(nameof(ChangeActive), RpcTarget.AllBuffered, (ConnectionScreen, BattleScreen));
         photonView.RPC(nameof(ChangeTurn), RpcTarget.AllBuffered);
     }
 
@@ -275,15 +278,21 @@ public class Main : MonoBehaviourPunCallbacks
         else if (ResultScreen.activeSelf)
             ChangeActive(ResultScreen, HomeScreen);
 
-        ResetAndInit();
+        ResetGame();
     }
     public void Retry()
     {
         ChangeActive(ResultScreen, ConnectionScreen);
-        ResetAndInit();
+        ResetGame();
         MatchMaking.matchMake.StartMatchMaking(PlayerName);
     }
-    void ResetAndInit()
+
+    void InitGame()
+    {
+        Player1Life = playerStartLife;
+        Player2Life = playerStartLife;
+    }
+    void ResetGame()
     {
         if (AllPlayers.Count > 0)
         {
@@ -294,8 +303,7 @@ public class Main : MonoBehaviourPunCallbacks
             }
         }
         AllPlayers = new List<GameObject>();
-        Player1Life = playerStartLife;
-        Player2Life = playerStartLife;
+        InitGame();
 
     }
 
