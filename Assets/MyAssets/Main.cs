@@ -194,7 +194,7 @@ public class Main : MonoBehaviourPunCallbacks
 
     public IEnumerator CountDown()
     {
-        timeLimit = 10;
+        timeLimit = 20;
         while (timeLimit > 0)
         {
             yield return new WaitForSeconds(1f);
@@ -253,6 +253,7 @@ public class Main : MonoBehaviourPunCallbacks
                             continue;
                         }
                         Debug.Log(p1.name);
+                        //‚±‚±‚æ‚­‚È‚¢
                         CharacterController controller = p1.GetComponent<CharacterController>();
                         if (!controller.IsStop)
                         {
@@ -335,6 +336,7 @@ public class Main : MonoBehaviourPunCallbacks
 
     public void PlayerDead(PlayerNum player, GameObject playerObject)
     {
+        Debug.Log("deaddead");
         if (player == PlayerNum.Player1)
         {
             Player1Life--;
