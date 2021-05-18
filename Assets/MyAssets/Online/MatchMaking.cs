@@ -7,6 +7,8 @@ using UnityEngine;
 public class MatchMaking : MonoBehaviourPunCallbacks
 {
     public static MatchMaking matchMake;
+
+
     private void Awake()
     {
         if (matchMake == null)
@@ -48,10 +50,10 @@ public class MatchMaking : MonoBehaviourPunCallbacks
     // ランダムで参加できるルームが存在しないなら、新規でルームを作成する
     public override void OnJoinRandomFailed(short returnCode, string message)
     {
+
         // ルームの参加人数を2人に設定する
         var roomOptions = new RoomOptions();
         roomOptions.MaxPlayers = 2;
-
         PhotonNetwork.CreateRoom(null, roomOptions);
     }
 
@@ -72,9 +74,18 @@ public class MatchMaking : MonoBehaviourPunCallbacks
             Main.main.isMaster = false;
         }
 
-        Main.main.ChangeActive(Main.main.ConnectionScreen, Main.main.BattleScreen);
-        Main.main.GameStart();
 
+        if (PhotonNetwork.CurrentRoom.PlayerCount == PhotonNetwork.CurrentRoom.MaxPlayers)
+        {
+            Debug.Log("can start");
+            Main.main.ChangeActive(Main.main.ConnectionScreen, Main.main.BattleScreen);
+            Main.main.GameStart();
+        }
+
+    }
+
+    public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
+    {
 
     }
 
