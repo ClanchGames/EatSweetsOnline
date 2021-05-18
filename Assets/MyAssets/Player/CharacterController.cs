@@ -40,9 +40,10 @@ public class CharacterController : MonoBehaviourPunCallbacks
     private void FixedUpdate()
     {
         if (!IsShot) return;
-        Debug.Log(playerNum + "pre" + preSpeed);
-        Debug.Log(playerNum + "now" + nowSpeed);
+        // Debug.Log(playerNum + "pre" + preSpeed);
+        // Debug.Log(playerNum + "now" + nowSpeed);
         nowSpeed = rigid.velocity.magnitude;
+        Debug.Log(Mathf.Abs(nowSpeed - preSpeed));
         if (Mathf.Abs(nowSpeed - preSpeed) <= 0.5)
         {
             IsStop = true;
