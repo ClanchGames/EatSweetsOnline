@@ -235,6 +235,7 @@ public class Main : MonoBehaviourPunCallbacks
     }
     IEnumerator CheckPlayerMotion()
     {
+        if (!IsGameStart) yield break;
         int a = 0;
         while (a < 1000000)
         {
