@@ -5,6 +5,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using static AdMob;
 using System.Linq;
+using System;
 
 public class Main : MonoBehaviourPunCallbacks
 {
@@ -149,12 +150,18 @@ public class Main : MonoBehaviourPunCallbacks
 
     public void GameStart()
     {
-        photonView.RPC(nameof(ChangeTurn), RpcTarget.AllBuffered);
+        ChangeTurn();
     }
 
-    [PunRPC]
     private void ChangeTurn()
     {
+        //ターンプレイヤーのみが通れる。
+        if (TurnPlayer != PlayerNum.None && TurnPlayer != playerNum)
+        {
+            return;
+        }
+
+        //切り替え
         switch (TurnPlayer)
         {
             case PlayerNum.None:
@@ -168,6 +175,14 @@ public class Main : MonoBehaviourPunCallbacks
                 break;
         }
 
+        photonView.RPC(nameof(SetTurnPlayer), RpcTarget.AllBuffered, (int)TurnPlayer);
+    }
+    [PunRPC]
+    void SetTurnPlayer(int num)
+    {
+        TurnPlayer = (PlayerNum)Enum.ToObject(typeof(PlayerNum), num);
+
+        //ターンプレイや～になった人はプレイヤー生成
         if (TurnPlayer == playerNum)
         {
             GeneratePlayer();
@@ -176,7 +191,6 @@ public class Main : MonoBehaviourPunCallbacks
             StartCoroutine(countDown);
         }
     }
-
 
     public IEnumerator CountDown()
     {
@@ -187,18 +201,17 @@ public class Main : MonoBehaviourPunCallbacks
             timeLimit--;
             //  Debug.Log("limit" + timeLimit);
         }
-        photonView.RPC(nameof(ChangeTurn), RpcTarget.AllBuffered);
+        ChangeTurn();
     }
 
 
-    public void AddPlayerToList(GameObject player)
+    public void AddPlayerToList(GameObject player, PlayerNum num)
     {
-        PlayerNum pn = player.GetComponent<CharacterController>().playerNum;
-        if (pn == PlayerNum.Player1)
+        if (num == PlayerNum.Player1)
         {
             P1Objects.Add(player);
         }
-        else if (pn == PlayerNum.Player2)
+        else if (num == PlayerNum.Player2)
         {
             P2Objects.Add(player);
         }
@@ -267,7 +280,10 @@ public class Main : MonoBehaviourPunCallbacks
             if (IsP1Stop && IsP2Stop)
             {
                 Debug.Log("all stop");
-                ChangeTurn();
+                if (TurnPlayer == playerNum)
+                {
+                    ChangeTurn();
+                }
                 yield break;
             }
         }

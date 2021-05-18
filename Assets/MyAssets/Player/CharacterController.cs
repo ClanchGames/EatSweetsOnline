@@ -25,19 +25,13 @@ public class CharacterController : MonoBehaviourPunCallbacks
     // Start is called before the first frame update
     void Start()
     {
-        if (Main.main.isMaster)
-        {
-            playerNum = Main.PlayerNum.Player1;
-        }
-        else
-        {
-            playerNum = Main.PlayerNum.Player2;
-        }
+
+        playerNum = Main.main.playerNum;
 
         rigid = GetComponent<Rigidbody>();
         speed = 500;
         IsMine = photonView.IsMine;
-        Main.main.AddPlayerToList(gameObject);
+        Main.main.AddPlayerToList(gameObject, playerNum);
     }
     private void FixedUpdate()
     {
