@@ -51,7 +51,12 @@ public class Main : MonoBehaviourPunCallbacks
     public GameObject BattleScreen;
     public GameObject ResultScreen;
 
-    public List<GameObject> AllPlayers = new List<GameObject>();
+    public List<GameObject> P1Objects = new List<GameObject>();
+    public List<GameObject> P2Objects = new List<GameObject>();
+    public bool IsP1Stop { get; set; } = false;
+    public bool IsP2Stop { get; set; } = false;
+
+
     public void Right()
     {
         right = true;
@@ -188,7 +193,14 @@ public class Main : MonoBehaviourPunCallbacks
 
     public void AddPlayerToList(GameObject player)
     {
-        AllPlayers.Add(player);
+        if (playerNum == PlayerNum.Player1)
+        {
+            P1Objects.Add(player);
+        }
+        else if (playerNum == PlayerNum.Player2)
+        {
+            P2Objects.Add(player);
+        }
     }
     public void AfterShot()
     {
@@ -202,33 +214,65 @@ public class Main : MonoBehaviourPunCallbacks
         int a = 0;
         while (a < 1000000)
         {
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.3f);
             a++;
-            bool IsAllPlayerStop = true;
-            if (AllPlayers.Count > 0)
+            if (playerNum == PlayerNum.Player1 && !IsP1Stop)
             {
-                foreach (var player in AllPlayers)
+                IsP1Stop = true;
+                if (P1Objects.Count > 0)
                 {
-
-                    Rigidbody rb = player.GetComponent<Rigidbody>();
-                    CharacterController controller = player.GetComponent<CharacterController>();
-
-                    if (!controller.IsStop)
+                    foreach (var p1 in P1Objects)
                     {
-                        IsAllPlayerStop = false;
+                        CharacterController controller = p1.GetComponent<CharacterController>();
+                        if (!controller.IsStop)
+                        {
+                            IsP1Stop = false;
+                        }
                     }
                 }
+
+                if (IsP1Stop)
+                {
+                    photonView.RPC(nameof(ConfirmStop), RpcTarget.AllBuffered, (int)PlayerNum.Player1);
+                }
             }
+            if (playerNum == PlayerNum.Player2)
+            {
+                IsP2Stop = true;
+                if (P1Objects.Count > 0)
+                {
+                    foreach (var p2 in P2Objects)
+                    {
+                        CharacterController controller = p2.GetComponent<CharacterController>();
+                        if (!controller.IsStop)
+                        {
+                            IsP2Stop = false;
+                        }
+                    }
+                }
+                if (IsP2Stop)
+                {
+                    photonView.RPC(nameof(ConfirmStop), RpcTarget.AllBuffered, (int)PlayerNum.Player2);
+                }
+            }
+
             //‘Sˆõ‚ªŽ~‚Ü‚Á‚Ä‚½‚çOK
-            if (IsAllPlayerStop)
+            if (IsP1Stop && IsP2Stop)
             {
                 photonView.RPC(nameof(ChangeTurn), RpcTarget.AllBuffered);
-
                 yield break;
             }
-
         }
     }
+    [PunRPC]
+    void ConfirmStop(int num)
+    {
+        if (num == (int)PlayerNum.Player1)
+            IsP1Stop = true;
+        else if (num == (int)PlayerNum.Player2)
+            IsP2Stop = true;
+    }
+
 
     //player‚ð¶¬
     public void GeneratePlayer()
@@ -251,12 +295,13 @@ public class Main : MonoBehaviourPunCallbacks
         if (player == PlayerNum.Player1)
         {
             Player1Life--;
+            P1Objects.Remove(playerObject);
         }
         else if (player == PlayerNum.Player2)
         {
             Player2Life--;
+            P2Objects.Remove(playerObject);
         }
-        AllPlayers.Remove(playerObject);
     }
 
 
@@ -296,15 +341,22 @@ public class Main : MonoBehaviourPunCallbacks
     }
     void ResetGame()
     {
-        if (AllPlayers.Count > 0)
+        if (P1Objects.Count > 0)
         {
-            Debug.Log("players destroy");
-            foreach (var player in AllPlayers)
+            foreach (var player in P1Objects)
             {
                 Destroy(player);
             }
         }
-        AllPlayers = new List<GameObject>();
+        if (P2Objects.Count > 0)
+        {
+            foreach (var player in P2Objects)
+            {
+                Destroy(player);
+            }
+        }
+        P1Objects = new List<GameObject>();
+        P2Objects = new List<GameObject>();
         InitGame();
 
     }
