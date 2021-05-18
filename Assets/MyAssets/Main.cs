@@ -264,7 +264,7 @@ public class Main : MonoBehaviourPunCallbacks
             if (IsP1Stop && IsP2Stop)
             {
                 Debug.Log("all stop");
-                photonView.RPC(nameof(ChangeTurn), RpcTarget.AllBuffered);
+                ChangeTurn();
                 yield break;
             }
         }
