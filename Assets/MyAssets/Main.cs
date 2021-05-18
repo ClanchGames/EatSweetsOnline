@@ -241,6 +241,10 @@ public class Main : MonoBehaviourPunCallbacks
                 {
                     foreach (var p1 in P1Objects)
                     {
+                        if (p1 == null)
+                        {
+                            continue;
+                        }
                         Debug.Log(p1.name);
                         CharacterController controller = p1.GetComponent<CharacterController>();
                         if (!controller.IsStop)
