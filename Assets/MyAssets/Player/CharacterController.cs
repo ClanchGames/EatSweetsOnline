@@ -44,7 +44,7 @@ public class CharacterController : MonoBehaviourPunCallbacks
         //‘Å‚Â‚Ü‚¦‚ÍŠm”F‚µ‚È‚¢
         if (!IsShot) return;
         velocity = rigid.velocity.magnitude;
-        Debug.Log(playerNum + "vel" + velocity);
+
         if (velocity <= 0.5)
         {
             IsStop = true;

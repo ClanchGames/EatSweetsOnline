@@ -259,6 +259,7 @@ public class Main : MonoBehaviourPunCallbacks
             //‘Sˆõ‚ªŽ~‚Ü‚Á‚Ä‚½‚çOK
             if (IsP1Stop && IsP2Stop)
             {
+                Debug.Log("all stop");
                 photonView.RPC(nameof(ChangeTurn), RpcTarget.AllBuffered);
                 yield break;
             }
@@ -271,6 +272,7 @@ public class Main : MonoBehaviourPunCallbacks
             IsP1Stop = true;
         else if (num == (int)PlayerNum.Player2)
             IsP2Stop = true;
+        Debug.Log("confirm" + " p1" + IsP1Stop + " p2" + IsP2Stop);
     }
 
 
