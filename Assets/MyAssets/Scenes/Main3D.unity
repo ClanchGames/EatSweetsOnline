@@ -1332,6 +1332,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96b2a76d4136e2147b2c4ffeafd3fe6d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerNum: 0
 --- !u!65 &303938293
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1739,7 +1740,8 @@ MonoBehaviour:
   ConnectionScreen: {fileID: 1903803594}
   BattleScreen: {fileID: 1278586377}
   ResultScreen: {fileID: 875330492}
-  AllPlayers: []
+  P1Objects: []
+  P2Objects: []
 --- !u!4 &499476273
 Transform:
   m_ObjectHideFlags: 0
