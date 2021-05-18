@@ -31,7 +31,8 @@ public class CharacterController : MonoBehaviourPunCallbacks
         rigid = GetComponent<Rigidbody>();
         speed = 500;
         IsMine = photonView.IsMine;
-        Main.main.AddPlayerToList(gameObject, playerNum);
+        if (IsMine)
+            Main.main.AddPlayerToList(gameObject, playerNum);
     }
     private void FixedUpdate()
     {
