@@ -33,7 +33,10 @@ public class CharacterController : MonoBehaviourPunCallbacks
         IsMine = photonView.IsMine;
         Main.main.AddPlayerToList(gameObject);
     }
+    private void FixedUpdate()
+    {
 
+    }
     // Update is called once per frame
     void Update()
     {
