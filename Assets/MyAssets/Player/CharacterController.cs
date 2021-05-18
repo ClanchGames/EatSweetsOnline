@@ -37,7 +37,7 @@ public class CharacterController : MonoBehaviourPunCallbacks
     // Update is called once per frame
     void Update()
     {
-        Debug.Log("isyourturn:" + Main.main.IsYourTurn);
+        // Debug.Log("isyourturn:" + Main.main.IsYourTurn);
 
         //Ž©•ª‚Ì‚¶‚á‚È‚¢‚È‚çreturn
         if (!IsMine)
