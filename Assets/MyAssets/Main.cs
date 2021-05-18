@@ -165,6 +165,7 @@ public class Main : MonoBehaviourPunCallbacks
 
         if (TurnPlayer == playerNum)
         {
+            GeneratePlayer();
             countDown = null;
             countDown = CountDown();
             StartCoroutine(countDown);
@@ -231,17 +232,11 @@ public class Main : MonoBehaviourPunCallbacks
         Vector3 position = new Vector3(0, -10, 0);
         if (TurnPlayer == PlayerNum.Player1)
         {
-            if (isMaster)
-            {
-                GameObject player1 = PhotonNetwork.Instantiate("Player1", position, Quaternion.identity);
-            }
+            GameObject player1 = PhotonNetwork.Instantiate("Player1", position, Quaternion.identity);
         }
         else if (TurnPlayer == PlayerNum.Player2)
         {
-            if (!isMaster)
-            {
-                GameObject player2 = PhotonNetwork.Instantiate("Player2", position, Quaternion.identity);
-            }
+            GameObject player2 = PhotonNetwork.Instantiate("Player2", position, Quaternion.identity);
         }
 
     }
