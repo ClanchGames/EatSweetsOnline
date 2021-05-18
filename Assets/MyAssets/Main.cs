@@ -144,8 +144,6 @@ public class Main : MonoBehaviourPunCallbacks
 
     public void GameStart()
     {
-        GameObject[] screens = { ConnectionScreen, BattleScreen };
-        photonView.RPC(nameof(ChangeActive), RpcTarget.AllBuffered, screens);
         photonView.RPC(nameof(ChangeTurn), RpcTarget.AllBuffered);
     }
 

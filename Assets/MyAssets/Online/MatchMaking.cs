@@ -85,7 +85,7 @@ public class MatchMaking : MonoBehaviourPunCallbacks
 
     public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
     {
-
+        Debug.Log("someone come:" + newPlayer.UserId);
     }
 
 
