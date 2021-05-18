@@ -193,11 +193,12 @@ public class Main : MonoBehaviourPunCallbacks
 
     public void AddPlayerToList(GameObject player)
     {
-        if (playerNum == PlayerNum.Player1)
+        PlayerNum pn = player.GetComponent<CharacterController>().playerNum;
+        if (pn == PlayerNum.Player1)
         {
             P1Objects.Add(player);
         }
-        else if (playerNum == PlayerNum.Player2)
+        else if (pn == PlayerNum.Player2)
         {
             P2Objects.Add(player);
         }
@@ -227,6 +228,7 @@ public class Main : MonoBehaviourPunCallbacks
                 {
                     foreach (var p1 in P1Objects)
                     {
+                        Debug.Log(p1.name);
                         CharacterController controller = p1.GetComponent<CharacterController>();
                         if (!controller.IsStop)
                         {
@@ -247,6 +249,7 @@ public class Main : MonoBehaviourPunCallbacks
                 {
                     foreach (var p2 in P2Objects)
                     {
+                        Debug.Log(p2.name);
                         CharacterController controller = p2.GetComponent<CharacterController>();
                         if (!controller.IsStop)
                         {

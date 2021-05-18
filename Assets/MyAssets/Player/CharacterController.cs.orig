@@ -4,10 +4,8 @@ using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
 
-public class CharacterController : MonoBehaviourPunCallbacks
+public class CharacterController : MonoBehaviourPun
 {
-    public Main.PlayerNum playerNum;
-
     Rigidbody rigid;
     Vector3 mousePosition;
     Vector2 mouseWorldPosition;
@@ -15,57 +13,37 @@ public class CharacterController : MonoBehaviourPunCallbacks
 
     private float speed;
     private bool IsMine;
-    private bool IsShot;
-    private bool BeforeShot = true;
-
-    public bool IsStop { get; set; } = false;
-
-
-    float velocity;
     // Start is called before the first frame update
     void Start()
     {
-        if (Main.main.isMaster)
-        {
-            playerNum = Main.PlayerNum.Player1;
-        }
-        else
-        {
-            playerNum = Main.PlayerNum.Player2;
-        }
-
         rigid = GetComponent<Rigidbody>();
         speed = 500;
         IsMine = photonView.IsMine;
-        Main.main.AddPlayerToList(gameObject);
+        Main.main.AllPlayers.Add(gameObject);
     }
-    private void FixedUpdate()
-    {
-        //打つまえは確認しない
-        if (!IsShot) return;
-        velocity = rigid.velocity.magnitude;
 
-        if (velocity <= 0.5)
-        {
-            IsStop = true;
-        }
-        else
-        {
-            IsStop = false;
-        }
-    }
     // Update is called once per frame
     void Update()
     {
-        // Debug.Log("isyourturn:" + Main.main.IsYourTurn);
-
+        Debug.Log(gameObject.name + IsMine);
+<<<<<<< HEAD
+=======
         //自分のじゃないならreturn
-        if (!IsMine) return;
-        //自分のターンじゃないならreturn
-        if (!Main.main.IsYourTurn) return;
-        //打ち終わったらもう打てない
-        if (IsShot) return;
+>>>>>>> 10bca97da549b3c6f6fd0771dfc0b5c8f852c3c3
+        if (!IsMine)
+        {
+            return;
+        }
 
+        //自分のターンじゃないならreturn
+        if (Main.main.isMaster && Main.main.TurnPlayer != 1)
+        {
+            return;
+        }
+        if (!Main.main.isMaster && Main.main.TurnPlayer != 2)
+        {
+            return;
+        }
         mousePosition = Input.mousePosition;
         mousePosition.z = 10;
         mouseWorldPosition = Camera.main.ScreenToWorldPoint(mousePosition);
@@ -74,7 +52,9 @@ public class CharacterController : MonoBehaviourPunCallbacks
         //引っ張り始める
         if (Input.GetMouseButtonDown(0))
         {
+
             startDragPos = mouseWorldPosition;
+
         }
         //離す
         else if (Input.GetMouseButtonUp(0))
@@ -83,8 +63,7 @@ public class CharacterController : MonoBehaviourPunCallbacks
             Vector2 startDirection = -1 * (endDragPos - startDragPos).normalized;
             speed = (endDragPos - startDragPos).magnitude * 250;
             rigid.AddForce(startDirection * speed);
-            Main.main.AfterShot();
-            IsShot = true;
+            Main.main.CheckPlayerIsMove();
 
         }
 
@@ -99,18 +78,7 @@ public class CharacterController : MonoBehaviourPunCallbacks
 
     public void Dead()
     {
-        Main.main.PlayerDead(playerNum, gameObject);
+        Main.main.AllPlayers.Remove(gameObject);
         Destroy(gameObject);
-        // StartCoroutine(DestroyCoroutine());
-    }
-
-    IEnumerator DestroyCoroutine()
-    {
-        yield return new WaitForSeconds(1f);
-        Destroy(gameObject);
-    }
-    private void OnDestroy()
-    {
-        // StopCoroutine(DestroyCoroutine());
     }
 }
