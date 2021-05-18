@@ -264,6 +264,7 @@ public class Main : MonoBehaviourPunCallbacks
                 IsP2Stop = true;
                 if (P2Objects.Count > 0)
                 {
+                    Debug.Log("in1");
                     foreach (var p2 in P2Objects)
                     {
                         if (p2 == null)
@@ -282,6 +283,7 @@ public class Main : MonoBehaviourPunCallbacks
                 if (IsP2Stop)
                 {
                     photonView.RPC(nameof(ConfirmStop), RpcTarget.AllBuffered, (int)PlayerNum.Player2);
+                    Debug.Log("in2");
                 }
             }
 
