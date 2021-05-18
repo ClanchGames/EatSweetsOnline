@@ -16,6 +16,10 @@ public class CharacterController : MonoBehaviourPunCallbacks
     private float speed;
     private bool IsMine;
     private bool IsShot;
+
+    public bool IsStop { get; set; } = false;
+    float preSpeed = 0;
+    float nowSpeed = 0;
     // Start is called before the first frame update
     void Start()
     {
@@ -35,7 +39,19 @@ public class CharacterController : MonoBehaviourPunCallbacks
     }
     private void FixedUpdate()
     {
-
+        if (!IsShot) return;
+        Debug.Log("pre" + preSpeed);
+        Debug.Log("now" + nowSpeed);
+        nowSpeed = rigid.velocity.magnitude;
+        if (Mathf.Abs(nowSpeed - preSpeed) <= 0.5)
+        {
+            IsStop = true;
+        }
+        else
+        {
+            IsStop = false;
+        }
+        preSpeed = rigid.velocity.magnitude;
     }
     // Update is called once per frame
     void Update()
