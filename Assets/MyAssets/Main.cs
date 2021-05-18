@@ -180,7 +180,7 @@ public class Main : MonoBehaviourPunCallbacks
         {
             yield return new WaitForSeconds(1f);
             timeLimit--;
-            Debug.Log("limit" + timeLimit);
+            //  Debug.Log("limit" + timeLimit);
         }
         photonView.RPC(nameof(ChangeTurn), RpcTarget.AllBuffered);
     }
@@ -205,15 +205,18 @@ public class Main : MonoBehaviourPunCallbacks
             yield return new WaitForSeconds(0.5f);
             a++;
             bool IsAllPlayerStop = true;
-            foreach (var player in AllPlayers)
+            if (AllPlayers.Count > 0)
             {
-
-                Rigidbody rb = player.GetComponent<Rigidbody>();
-                CharacterController controller = player.GetComponent<CharacterController>();
-
-                if (!controller.IsStop)
+                foreach (var player in AllPlayers)
                 {
-                    IsAllPlayerStop = false;
+
+                    Rigidbody rb = player.GetComponent<Rigidbody>();
+                    CharacterController controller = player.GetComponent<CharacterController>();
+
+                    if (!controller.IsStop)
+                    {
+                        IsAllPlayerStop = false;
+                    }
                 }
             }
             //‘Sˆõ‚ªŽ~‚Ü‚Á‚Ä‚½‚çOK
