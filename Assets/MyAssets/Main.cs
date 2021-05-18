@@ -133,7 +133,6 @@ public class Main : MonoBehaviourPunCallbacks
         ResetGame();
     }
 
-    [PunRPC]
     public void ChangeActive(GameObject falseObj, GameObject trueObj)
     {
         if (falseObj.activeSelf)

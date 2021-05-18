@@ -78,6 +78,7 @@ public class MatchMaking : MonoBehaviourPunCallbacks
         if (PhotonNetwork.CurrentRoom.PlayerCount == PhotonNetwork.CurrentRoom.MaxPlayers)
         {
             Debug.Log("can start");
+            Main.main.ChangeActive(Main.main.ConnectionScreen, Main.main.BattleScreen);
             Main.main.GameStart();
         }
 
@@ -85,6 +86,7 @@ public class MatchMaking : MonoBehaviourPunCallbacks
 
     public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
     {
+        Main.main.ChangeActive(Main.main.ConnectionScreen, Main.main.BattleScreen);
         Debug.Log("someone come:" + newPlayer.UserId);
     }
 
