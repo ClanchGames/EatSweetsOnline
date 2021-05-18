@@ -47,6 +47,7 @@ public class CharacterController : MonoBehaviourPunCallbacks
         {
             IsStop = false;
         }
+        Debug.Log("isstop" + IsStop);
     }
     // Update is called once per frame
     void Update()
