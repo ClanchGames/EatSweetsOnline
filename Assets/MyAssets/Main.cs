@@ -187,6 +187,7 @@ public class Main : MonoBehaviourPunCallbacks
     }
     public void AfterShot()
     {
+        Debug.Log("ismaster" + isMaster);
         StopCoroutine(countDown);
         StartCoroutine(CheckPlayerIsMoveCoroutine());
     }
