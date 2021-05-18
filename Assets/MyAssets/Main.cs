@@ -18,8 +18,11 @@ public class Main : MonoBehaviourPunCallbacks
     public bool IsGameStart { get; set; }
 
     public bool isMaster { get; set; }
-    public int Player1Life { get; set; } = 2;
-    public int Player2Life { get; set; } = 2;
+    public int Player1Life { get; set; }
+    public int Player2Life { get; set; }
+    int playerStartLife = 2;
+
+    public string PlayerName { get; set; }
 
     public enum PlayerNum
     {
@@ -45,6 +48,7 @@ public class Main : MonoBehaviourPunCallbacks
     public GameObject HomeScreen;
     public GameObject ConnectionScreen;
     public GameObject BattleScreen;
+    public GameObject ResultScreen;
 
     public List<GameObject> AllPlayers = new List<GameObject>();
     public void Right()
@@ -96,7 +100,7 @@ public class Main : MonoBehaviourPunCallbacks
     {
         if (Input.GetKeyDown(KeyCode.S))
         {
-            MatchMaking.matchMake.StartMatchMaking("aaa");
+            MatchMaking.matchMake.StartMatchMaking(PlayerName);
         }
 
         if (IsGameStart)
@@ -125,6 +129,7 @@ public class Main : MonoBehaviourPunCallbacks
     {
         MatchMaking.matchMake.StartMatchMaking("aaa");
         ChangeActive(HomeScreen, ConnectionScreen);
+        ResetAndInit();
     }
 
     public void ChangeActive(GameObject falseObj, GameObject trueObj)
@@ -255,9 +260,44 @@ public class Main : MonoBehaviourPunCallbacks
     {
         IsGameStart = false;
         Debug.Log("game set");
+        Disconnect();
+        ChangeActive(BattleScreen, ResultScreen);
+
     }
+    public void Disconnect()
+    {
+        PhotonNetwork.Disconnect();
+    }
+    public void ReturnHome()
+    {
+        if (BattleScreen.activeSelf)
+            ChangeActive(BattleScreen, HomeScreen);
+        else if (ResultScreen.activeSelf)
+            ChangeActive(ResultScreen, HomeScreen);
 
+        ResetAndInit();
+    }
+    public void Retry()
+    {
+        ChangeActive(ResultScreen, ConnectionScreen);
+        ResetAndInit();
+        MatchMaking.matchMake.StartMatchMaking(PlayerName);
+    }
+    void ResetAndInit()
+    {
+        if (AllPlayers.Count > 0)
+        {
+            Debug.Log("players destroy");
+            foreach (var player in AllPlayers)
+            {
+                Destroy(player);
+            }
+        }
+        AllPlayers = new List<GameObject>();
+        Player1Life = playerStartLife;
+        Player2Life = playerStartLife;
 
+    }
 
 
 

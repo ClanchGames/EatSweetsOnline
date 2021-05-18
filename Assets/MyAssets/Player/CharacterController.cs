@@ -90,7 +90,8 @@ public class CharacterController : MonoBehaviourPunCallbacks
     public void Dead()
     {
         Main.main.PlayerDead(playerNum, gameObject);
-        StartCoroutine(DestroyCoroutine());
+        Destroy(gameObject);
+        // StartCoroutine(DestroyCoroutine());
     }
 
     IEnumerator DestroyCoroutine()
@@ -100,6 +101,6 @@ public class CharacterController : MonoBehaviourPunCallbacks
     }
     private void OnDestroy()
     {
-        StopCoroutine(DestroyCoroutine());
+        // StopCoroutine(DestroyCoroutine());
     }
 }
