@@ -6,7 +6,7 @@ using Photon.Realtime;
 
 public class CharacterController : MonoBehaviourPunCallbacks
 {
-    Main.PlayerNum playerNum;
+    public Main.PlayerNum playerNum;
 
     Rigidbody rigid;
     Vector3 mousePosition;
