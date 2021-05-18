@@ -204,21 +204,25 @@ public class Main : MonoBehaviourPunCallbacks
     }
     public void AfterShot()
     {
-        Debug.Log("ismaster" + isMaster);
         StopCoroutine(countDown);
-        StartCoroutine(CheckPlayerIsMoveCoroutine());
+        photonView.RPC(nameof(StartCheckPlayerMotion), RpcTarget.AllBuffered);
     }
 
-    IEnumerator CheckPlayerIsMoveCoroutine()
+    [PunRPC]
+    void StartCheckPlayerMotion()
+    {
+        StartCoroutine(CheckPlayerMotion());
+    }
+    IEnumerator CheckPlayerMotion()
     {
         int a = 0;
         while (a < 1000000)
         {
             yield return new WaitForSeconds(0.3f);
             a++;
-            IsP1Stop = true;
             if (playerNum == PlayerNum.Player1)
             {
+                IsP1Stop = true;
                 if (P1Objects.Count > 0)
                 {
                     foreach (var p1 in P1Objects)
@@ -236,10 +240,10 @@ public class Main : MonoBehaviourPunCallbacks
                 }
             }
 
-            IsP2Stop = true;
             if (playerNum == PlayerNum.Player2)
             {
-                if (P1Objects.Count > 0)
+                IsP2Stop = true;
+                if (P2Objects.Count > 0)
                 {
                     foreach (var p2 in P2Objects)
                     {
