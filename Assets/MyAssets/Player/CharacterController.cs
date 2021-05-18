@@ -40,20 +40,12 @@ public class CharacterController : MonoBehaviourPunCallbacks
         // Debug.Log("isyourturn:" + Main.main.IsYourTurn);
 
         //©•ª‚Ì‚¶‚á‚È‚¢‚È‚çreturn
-        if (!IsMine)
-        {
-            return;
-        }
-
+        if (!IsMine) return;
         //©•ª‚Ìƒ^[ƒ“‚¶‚á‚È‚¢‚È‚çreturn
-        if (!Main.main.IsYourTurn)
-        {
-            return;
-        }
-
+        if (!Main.main.IsYourTurn) return;
         //‘Å‚¿I‚í‚Á‚½‚ç‚à‚¤‘Å‚Ä‚È‚¢
-        if (IsShot)
-            return;
+        if (IsShot) return;
+
         mousePosition = Input.mousePosition;
         mousePosition.z = 10;
         mouseWorldPosition = Camera.main.ScreenToWorldPoint(mousePosition);
