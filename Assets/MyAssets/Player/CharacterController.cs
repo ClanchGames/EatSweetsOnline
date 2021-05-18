@@ -16,10 +16,12 @@ public class CharacterController : MonoBehaviourPunCallbacks
     private float speed;
     private bool IsMine;
     private bool IsShot;
+    private bool BeforeShot = true;
 
     public bool IsStop { get; set; } = false;
-    float preSpeed = 0;
-    float nowSpeed = 0;
+
+
+    float velocity;
     // Start is called before the first frame update
     void Start()
     {
@@ -39,12 +41,11 @@ public class CharacterController : MonoBehaviourPunCallbacks
     }
     private void FixedUpdate()
     {
+        //‘Å‚Â‚Ü‚¦‚ÍŠm”F‚µ‚È‚¢
         if (!IsShot) return;
-        // Debug.Log(playerNum + "pre" + preSpeed);
-        // Debug.Log(playerNum + "now" + nowSpeed);
-        nowSpeed = rigid.velocity.magnitude;
-        Debug.Log(Mathf.Abs(nowSpeed - preSpeed));
-        if (Mathf.Abs(nowSpeed - preSpeed) <= 0.5)
+        velocity = rigid.velocity.magnitude;
+        Debug.Log(playerNum + "vel" + velocity);
+        if (velocity <= 0.5)
         {
             IsStop = true;
         }
@@ -52,7 +53,6 @@ public class CharacterController : MonoBehaviourPunCallbacks
         {
             IsStop = false;
         }
-        preSpeed = rigid.velocity.magnitude;
     }
     // Update is called once per frame
     void Update()
@@ -74,9 +74,7 @@ public class CharacterController : MonoBehaviourPunCallbacks
         //ˆø‚Á’£‚èŽn‚ß‚é
         if (Input.GetMouseButtonDown(0))
         {
-
             startDragPos = mouseWorldPosition;
-
         }
         //—£‚·
         else if (Input.GetMouseButtonUp(0))
