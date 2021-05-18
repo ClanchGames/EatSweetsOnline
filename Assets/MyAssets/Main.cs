@@ -205,13 +205,13 @@ public class Main : MonoBehaviourPunCallbacks
     }
 
 
-    public void AddPlayerToList(GameObject player, PlayerNum num)
+    public void AddPlayerToList(GameObject player)
     {
-        if (num == PlayerNum.Player1)
+        if (playerNum == PlayerNum.Player1)
         {
             P1Objects.Add(player);
         }
-        else if (num == PlayerNum.Player2)
+        else if (playerNum == PlayerNum.Player2)
         {
             P2Objects.Add(player);
         }
