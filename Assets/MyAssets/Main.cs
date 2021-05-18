@@ -31,6 +31,7 @@ public class Main : MonoBehaviourPunCallbacks
         Player2 = 2,
     }
     public PlayerNum TurnPlayer { get; set; }
+    public PlayerNum playerNum { get; set; }
 
     public bool IsYourTurn
     {
@@ -161,10 +162,13 @@ public class Main : MonoBehaviourPunCallbacks
                 TurnPlayer = PlayerNum.Player1;
                 break;
         }
-        countDown = null;
-        countDown = CountDown();
-        StartCoroutine(countDown);
 
+        if (TurnPlayer == playerNum)
+        {
+            countDown = null;
+            countDown = CountDown();
+            StartCoroutine(countDown);
+        }
     }
 
 
@@ -212,7 +216,6 @@ public class Main : MonoBehaviourPunCallbacks
             //‘Sˆõ‚ªŽ~‚Ü‚Á‚Ä‚½‚çOK
             if (IsAllPlayerStop)
             {
-                Debug.Log(IsAllPlayerStop);
                 photonView.RPC(nameof(ChangeTurn), RpcTarget.AllBuffered);
 
                 yield break;
