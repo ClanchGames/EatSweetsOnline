@@ -31,7 +31,6 @@ public class CharacterController : MonoBehaviourPunCallbacks
         rigid = GetComponent<Rigidbody>();
         speed = 500;
         IsMine = photonView.IsMine;
-        Debug.Log("num" + playerNum + photonView.Owner);
         if (IsMine)
             Main.main.AddPlayerToList(gameObject, playerNum);
     }
@@ -96,7 +95,6 @@ public class CharacterController : MonoBehaviourPunCallbacks
 
     public void Dead()
     {
-        // photonView.Owner
         if (playerNum == Main.PlayerNum.Player1)
         {
             if (IsMine)
@@ -110,7 +108,14 @@ public class CharacterController : MonoBehaviourPunCallbacks
         }
         else if (playerNum == Main.PlayerNum.Player2)
         {
-            Main.main.PlayerDead(playerNum, gameObject);
+            if (IsMine)
+            {
+                Main.main.PlayerDead(playerNum, gameObject);
+            }
+            else
+            {
+                Main.main.PlayerDead(Main.PlayerNum.Player1, gameObject);
+            }
         }
         Destroy(gameObject);
         // StartCoroutine(DestroyCoroutine());
