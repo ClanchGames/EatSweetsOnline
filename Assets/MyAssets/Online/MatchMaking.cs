@@ -45,7 +45,7 @@ public class MatchMaking : MonoBehaviourPunCallbacks
     {
         // ランダムなルームに参加する
         PhotonNetwork.JoinRandomRoom();
-        Debug.Log("connect to master");
+        //Debug.Log("connect to master");
     }
     // ランダムで参加できるルームが存在しないなら、新規でルームを作成する
     public override void OnJoinRandomFailed(short returnCode, string message)
@@ -84,6 +84,9 @@ public class MatchMaking : MonoBehaviourPunCallbacks
     {
         Main.main.ChangeActive(Main.main.ConnectionScreen, Main.main.BattleScreen);
     }
-
+    public override void OnPlayerLeftRoom(Photon.Realtime.Player otherPlayer)
+    {
+        Main.main.Disconnect();
+    }
 
 }

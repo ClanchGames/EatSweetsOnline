@@ -17,6 +17,7 @@ public class Main : MonoBehaviourPunCallbacks
     public bool left;
 
     public bool IsGameStart { get; set; }
+    public bool IsGameEnd { get; set; }
 
     public bool isMaster { get; set; }
     public int Player1Life { get; set; }
@@ -112,7 +113,7 @@ public class Main : MonoBehaviourPunCallbacks
 
         if (IsGameStart)
         {
-            if (Player1Life <= 0 || Player2Life <= 0)
+            if (Player1Life <= 0 || Player2Life <= 0 || IsGameEnd)
             {
                 GameSet();
             }
@@ -211,14 +212,12 @@ public class Main : MonoBehaviourPunCallbacks
         if (playerNum == PlayerNum.Player1)
         {
             P1Objects.Add(player);
-            Debug.Log("p1objadd");
         }
 
 
         if (playerNum == PlayerNum.Player2)
         {
             P2Objects.Add(player);
-            Debug.Log("p2objadd");
         }
 
     }
@@ -252,7 +251,6 @@ public class Main : MonoBehaviourPunCallbacks
                         {
                             continue;
                         }
-                        Debug.Log(p1.name);
                         //‚±‚±‚æ‚­‚È‚¢
                         CharacterController controller = p1.GetComponent<CharacterController>();
                         if (!controller.IsStop)
@@ -272,7 +270,6 @@ public class Main : MonoBehaviourPunCallbacks
                 IsP2Stop = true;
                 if (P2Objects.Count > 0)
                 {
-                    Debug.Log("in1");
                     foreach (var p2 in P2Objects)
                     {
                         if (p2 == null)
@@ -280,7 +277,6 @@ public class Main : MonoBehaviourPunCallbacks
                             continue;
                         }
 
-                        Debug.Log(p2.name);
                         CharacterController controller = p2.GetComponent<CharacterController>();
                         if (!controller.IsStop)
                         {
@@ -291,14 +287,12 @@ public class Main : MonoBehaviourPunCallbacks
                 if (IsP2Stop)
                 {
                     photonView.RPC(nameof(ConfirmStop), RpcTarget.AllBuffered, (int)PlayerNum.Player2);
-                    Debug.Log("in2");
                 }
             }
 
             //‘Sˆõ‚ªŽ~‚Ü‚Á‚Ä‚½‚çOK
             if (IsP1Stop && IsP2Stop)
             {
-                Debug.Log("all stop");
                 if (TurnPlayer == playerNum)
                 {
                     ChangeTurn();
@@ -314,7 +308,7 @@ public class Main : MonoBehaviourPunCallbacks
             IsP1Stop = true;
         else if (num == (int)PlayerNum.Player2)
             IsP2Stop = true;
-        Debug.Log("confirm" + " p1" + IsP1Stop + " p2" + IsP2Stop);
+
     }
 
 
@@ -334,30 +328,29 @@ public class Main : MonoBehaviourPunCallbacks
 
     }
 
-    public void PlayerDead(PlayerNum player, GameObject playerObject)
+    [PunRPC]
+    public void PlayerDead(int playernum)
     {
-        Debug.Log("deaddead");
-        if (player == PlayerNum.Player1)
+        if (playernum == (int)PlayerNum.Player1)
         {
             Player1Life--;
-            P1Objects.Remove(playerObject);
         }
-        else if (player == PlayerNum.Player2)
+        else if (playernum == (int)PlayerNum.Player2)
         {
             Player2Life--;
-            P2Objects.Remove(playerObject);
         }
+
+
+
     }
 
 
-
+    [PunRPC]
     public void GameSet()
     {
         IsGameStart = false;
-        Debug.Log("game set");
-        Disconnect();
+        IsGameEnd = true;
         ChangeActive(BattleScreen, ResultScreen);
-
     }
     public void Disconnect()
     {
@@ -365,6 +358,7 @@ public class Main : MonoBehaviourPunCallbacks
     }
     public void ReturnHome()
     {
+        Disconnect();
         if (BattleScreen.activeSelf)
             ChangeActive(BattleScreen, HomeScreen);
         else if (ResultScreen.activeSelf)
@@ -374,6 +368,7 @@ public class Main : MonoBehaviourPunCallbacks
     }
     public void Retry()
     {
+        Disconnect();
         ChangeActive(ResultScreen, ConnectionScreen);
         ResetGame();
         MatchMaking.matchMake.StartMatchMaking(PlayerName);
@@ -381,6 +376,7 @@ public class Main : MonoBehaviourPunCallbacks
 
     void InitGame()
     {
+        TurnPlayer = PlayerNum.None;
         Player1Life = playerStartLife;
         Player2Life = playerStartLife;
     }

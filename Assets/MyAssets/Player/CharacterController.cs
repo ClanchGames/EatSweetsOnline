@@ -48,7 +48,7 @@ public class CharacterController : MonoBehaviourPunCallbacks
         {
             IsStop = false;
         }
-        Debug.Log("isstop" + IsStop);
+
     }
     // Update is called once per frame
     void Update()
@@ -77,11 +77,17 @@ public class CharacterController : MonoBehaviourPunCallbacks
         {
             Vector2 endDragPos = mouseWorldPosition;
             Vector2 startDirection = -1 * (endDragPos - startDragPos).normalized;
-            speed = (endDragPos - startDragPos).magnitude * 250;
-            rigid.AddForce(startDirection * speed);
-            Main.main.AfterShot();
-            IsShot = true;
+            float distance = (endDragPos - startDragPos).magnitude;
+            Debug.Log(distance);
+            if (distance >= 1)
+            {
 
+
+                speed = distance * 250;
+                rigid.AddForce(startDirection * speed);
+                Main.main.AfterShot();
+                IsShot = true;
+            }
         }
 
 
@@ -99,35 +105,18 @@ public class CharacterController : MonoBehaviourPunCallbacks
         {
             if (IsMine)
             {
-                Main.main.PlayerDead(playerNum, gameObject);
-            }
-            else
-            {
-                Main.main.PlayerDead(Main.PlayerNum.Player2, gameObject);
+                Main.main.P1Objects.Remove(gameObject);
+                Main.main.photonView.RPC(nameof(Main.main.PlayerDead), RpcTarget.AllBuffered, (int)playerNum);
             }
         }
         else if (playerNum == Main.PlayerNum.Player2)
         {
             if (IsMine)
             {
-                Main.main.PlayerDead(playerNum, gameObject);
-            }
-            else
-            {
-                Main.main.PlayerDead(Main.PlayerNum.Player1, gameObject);
+                Main.main.P2Objects.Remove(gameObject);
+                Main.main.photonView.RPC(nameof(Main.main.PlayerDead), RpcTarget.AllBuffered, (int)playerNum);
             }
         }
         Destroy(gameObject);
-        // StartCoroutine(DestroyCoroutine());
-    }
-
-    IEnumerator DestroyCoroutine()
-    {
-        yield return new WaitForSeconds(1f);
-        Destroy(gameObject);
-    }
-    private void OnDestroy()
-    {
-        // StopCoroutine(DestroyCoroutine());
     }
 }

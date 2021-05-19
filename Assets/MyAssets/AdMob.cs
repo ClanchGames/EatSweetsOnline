@@ -156,13 +156,13 @@ public class AdMob : MonoBehaviour
 
     public void HandleOnNormalBannerLoaded(object sender, EventArgs args)
     {
-        print("HandleAdLoaded event received");
+        //  print("HandleAdLoaded event received");
         normalBannerIsLoaded = true;
         normalBanner.Hide();
     }
     public void HandleOnLargeBannerLoaded(object sender, EventArgs args)
     {
-        print("HandleAdLoaded event received");
+        // print("HandleAdLoaded event received");
         largeBannerIsLoaded = true;
         largeBanner.Hide();
     }
