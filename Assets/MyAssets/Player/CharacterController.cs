@@ -78,7 +78,7 @@ public class CharacterController : MonoBehaviourPunCallbacks
             Vector2 endDragPos = mouseWorldPosition;
             Vector2 startDirection = -1 * (endDragPos - startDragPos).normalized;
             float distance = (endDragPos - startDragPos).magnitude;
-            Debug.Log(distance);
+
             if (distance >= 1)
             {
 
@@ -101,10 +101,12 @@ public class CharacterController : MonoBehaviourPunCallbacks
 
     public void Dead()
     {
+        Debug.Log("dead" + playerNum);
         if (playerNum == Main.PlayerNum.Player1)
         {
             if (IsMine)
             {
+                Debug.Log("deadplayer1");
                 Main.main.P1Objects.Remove(gameObject);
                 Main.main.photonView.RPC(nameof(Main.main.PlayerDead), RpcTarget.AllBuffered, (int)playerNum);
             }
@@ -113,6 +115,7 @@ public class CharacterController : MonoBehaviourPunCallbacks
         {
             if (IsMine)
             {
+                Debug.Log("deadplayer2");
                 Main.main.P2Objects.Remove(gameObject);
                 Main.main.photonView.RPC(nameof(Main.main.PlayerDead), RpcTarget.AllBuffered, (int)playerNum);
             }

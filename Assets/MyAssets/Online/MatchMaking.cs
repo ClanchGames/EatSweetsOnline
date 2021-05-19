@@ -86,7 +86,16 @@ public class MatchMaking : MonoBehaviourPunCallbacks
     }
     public override void OnPlayerLeftRoom(Photon.Realtime.Player otherPlayer)
     {
-        Main.main.Disconnect();
+        if (Main.main.IsGameStart)
+        {
+            Debug.Log("left opponent in game");
+            Main.main.DisconnectInGame();
+        }
+        else
+        {
+            Debug.Log("left opponent afte game");
+            Main.main.Disconnect();
+        }
     }
 
 }

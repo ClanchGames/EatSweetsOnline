@@ -19,10 +19,13 @@ public class Main : MonoBehaviourPunCallbacks
     public bool IsGameStart { get; set; }
     public bool IsGameEnd { get; set; }
 
+
     public bool isMaster { get; set; }
     public int Player1Life { get; set; }
     public int Player2Life { get; set; }
-    int playerStartLife = 2;
+    int playerStartLife = 1;
+
+    public PlayerNum Winner { get; set; } = PlayerNum.None;
 
     public string PlayerName { get; set; }
 
@@ -31,6 +34,7 @@ public class Main : MonoBehaviourPunCallbacks
         None = 0,
         Player1 = 1,
         Player2 = 2,
+        All = 3,
     }
     public PlayerNum TurnPlayer { get; set; }
     public PlayerNum playerNum { get; set; }
@@ -106,10 +110,7 @@ public class Main : MonoBehaviourPunCallbacks
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.S))
-        {
-            MatchMaking.matchMake.StartMatchMaking(PlayerName);
-        }
+        Debug.Log("turnplayer  " + TurnPlayer);
 
         if (IsGameStart)
         {
@@ -151,7 +152,7 @@ public class Main : MonoBehaviourPunCallbacks
 
     public void GameStart()
     {
-        ChangeTurn();
+        photonView.RPC(nameof(SetTurnPlayer), RpcTarget.AllBuffered, (int)PlayerNum.Player1);
     }
 
     private void ChangeTurn()
@@ -161,7 +162,6 @@ public class Main : MonoBehaviourPunCallbacks
         {
             return;
         }
-
         //切り替え
         switch (TurnPlayer)
         {
@@ -175,6 +175,7 @@ public class Main : MonoBehaviourPunCallbacks
                 TurnPlayer = PlayerNum.Player1;
                 break;
         }
+        Debug.Log("which?" + TurnPlayer);
 
         photonView.RPC(nameof(SetTurnPlayer), RpcTarget.AllBuffered, (int)TurnPlayer);
     }
@@ -182,10 +183,11 @@ public class Main : MonoBehaviourPunCallbacks
     void SetTurnPlayer(int num)
     {
         TurnPlayer = (PlayerNum)Enum.ToObject(typeof(PlayerNum), num);
-
+        Debug.Log("set turn player");
         //ターンプレイヤーになった人はプレイヤー生成
         if (TurnPlayer == playerNum)
         {
+            Debug.Log("you are turnplayer");
             GeneratePlayer();
             countDown = null;
             countDown = CountDown();
@@ -234,6 +236,7 @@ public class Main : MonoBehaviourPunCallbacks
     }
     IEnumerator CheckPlayerMotion()
     {
+        Debug.Log("checkmotion");
         int a = 0;
         while (a < 1000000)
         {
@@ -289,12 +292,14 @@ public class Main : MonoBehaviourPunCallbacks
                     photonView.RPC(nameof(ConfirmStop), RpcTarget.AllBuffered, (int)PlayerNum.Player2);
                 }
             }
-
+            Debug.Log("p1stop" + IsP1Stop + "  " + "p2stop" + IsP2Stop);
             //全員が止まってたらOK
             if (IsP1Stop && IsP2Stop)
             {
+                Debug.Log("all stop");
                 if (TurnPlayer == playerNum)
                 {
+                    Debug.Log("all stop change");
                     ChangeTurn();
                 }
                 yield break;
@@ -339,22 +344,39 @@ public class Main : MonoBehaviourPunCallbacks
         {
             Player2Life--;
         }
-
-
-
     }
 
 
-    [PunRPC]
+
     public void GameSet()
     {
         IsGameStart = false;
-        IsGameEnd = true;
+        IsGameEnd = false;
         ChangeActive(BattleScreen, ResultScreen);
+        if (Player1Life <= 0)
+        {
+            Winner = PlayerNum.Player2;
+        }
+        if (Player2Life <= 0)
+        {
+            Winner = PlayerNum.Player1;
+        }
+
+        if (Player1Life <= 0 && Player2Life <= 0)
+        {
+            Winner = PlayerNum.All;
+        }
     }
     public void Disconnect()
     {
         PhotonNetwork.Disconnect();
+    }
+    public void DisconnectInGame()
+    {
+        PhotonNetwork.Disconnect();
+        IsGameEnd = true;
+        Winner = playerNum;
+
     }
     public void ReturnHome()
     {
@@ -370,17 +392,22 @@ public class Main : MonoBehaviourPunCallbacks
     {
         Disconnect();
         ChangeActive(ResultScreen, ConnectionScreen);
-        ResetGame();
-        MatchMaking.matchMake.StartMatchMaking(PlayerName);
+        Play();
     }
 
     void InitGame()
     {
         TurnPlayer = PlayerNum.None;
+        Winner = PlayerNum.None;
         Player1Life = playerStartLife;
         Player2Life = playerStartLife;
     }
     void ResetGame()
+    {
+        InitGame();
+
+    }
+    public void DestroyAll()
     {
         if (P1Objects.Count > 0)
         {
@@ -398,10 +425,7 @@ public class Main : MonoBehaviourPunCallbacks
         }
         P1Objects = new List<GameObject>();
         P2Objects = new List<GameObject>();
-        InitGame();
-
     }
-
 
 
     //ここから下テスト用
