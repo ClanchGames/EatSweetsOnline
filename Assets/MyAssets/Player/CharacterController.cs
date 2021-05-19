@@ -40,7 +40,7 @@ public class CharacterController : MonoBehaviourPunCallbacks
         if (!IsShot) return;
         velocity = rigid.velocity.magnitude;
 
-        if (velocity <= 0.5)
+        if (velocity <= 0)
         {
             IsStop = true;
         }

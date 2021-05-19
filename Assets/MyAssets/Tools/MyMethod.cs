@@ -5,6 +5,7 @@ using DG.Tweening;
 using UnityEngine.UI;
 using System.Linq;
 using System;
+using System.Runtime.InteropServices;
 
 public static class MyMethod
 {
@@ -117,5 +118,82 @@ public static class MyMethod
         }
     }
 
+    /// <summary>
+    /// 指定した2次元配列を1次元配列に変換します。
+    /// </summary>
+    public static T[] ToOneDimensional<T>(T[,] src)
+    {
+        int ymax = src.GetLength(0);
+        int xmax = src.GetLength(1);
+        int len = xmax * ymax;
+        var dest = new T[len];
+
+        for (int y = 0, i = 0; y < ymax; y++)
+        {
+            for (int x = 0; x < xmax; x++, i++)
+            {
+                dest[i] = src[y, x];
+            }
+        }
+        return dest;
+    }
+
+    /// <summary>
+    /// 組み込み型のみを対象に2次元配列を1次元配列に変換します。
+    /// </summary>
+    public static T[] ToOneDimensionalPrimitives<T>(T[,] src)
+    {
+        int ymax = src.GetLength(0);
+        int xmax = src.GetLength(1);
+        int len = xmax * ymax;
+        var dest = new T[len];
+
+        var size = Marshal.SizeOf(typeof(T));
+        Buffer.BlockCopy(src, 0, dest, 0, len * size);
+        return dest;
+    }
+
+    /// <summary>
+    /// 指定した2次元配列を1次元配列に変換します。
+    /// <para>T[height, width] 範囲を超える分は切り捨て、不足している分は(T)の初期値になります。</para>
+    /// </summary>
+    public static T[,] ToTowDimensional<T>(T[] src, int width, int heigth)
+    {
+        var dest = new T[heigth, width];
+        int len = width * heigth;
+        len = src.Length < len ? src.Length : len;
+        for (int y = 0, i = 0; y < heigth; y++)
+        {
+            for (int x = 0; x < width; x++, i++)
+            {
+                if (i >= len)
+                {
+                    return dest;
+                }
+                dest[y, x] = src[i];
+            }
+        }
+
+        return dest;
+    }
+
+    /// <summary>
+    ///  組み込み型のみを対象に1次元配列を2次元配列に変換します。
+    /// <para>T[height, width] 範囲を超える分は切り捨て、不足している分は(T)の初期値になります。</para>
+    /// </summary>
+    public static T[,] ToTowDimensionalPrimitives<T>(T[] src, int width, int heigth)
+    {
+        var dest = new T[heigth, width];
+        int len = width * heigth;
+        len = src.Length < len ? src.Length : len;
+
+        var size = Marshal.SizeOf(typeof(T));
+        Buffer.BlockCopy(src, 0, dest, 0, len * size);
+        return dest;
+    }
+
 
 }
+
+
+

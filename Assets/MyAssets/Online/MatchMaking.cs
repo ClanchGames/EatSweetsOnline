@@ -42,10 +42,8 @@ public class MatchMaking : MonoBehaviourPunCallbacks
 
         if (PhotonNetwork.CurrentRoom != null)
         {
-            if (!PhotonNetwork.CurrentRoom.IsOpen)
-            {
-                PhotonNetwork.CurrentRoom.IsOpen = true;
-            }
+            // Debug.Log("まだroomある");
+            PhotonNetwork.CurrentRoom.IsOpen = true;
         }
 
     }
@@ -97,7 +95,7 @@ public class MatchMaking : MonoBehaviourPunCallbacks
     }
     public override void OnLeftRoom()
     {
-        Debug.Log("I left");
+        // Debug.Log("I left");
     }
     public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
     {
@@ -108,13 +106,13 @@ public class MatchMaking : MonoBehaviourPunCallbacks
         //バトル中
         if (Main.main.IsGameStart)
         {
-            Debug.Log("left opponent in game");
+            // Debug.Log("left opponent in game");
             Main.main.OpponentLeft();
         }
         //バトル終わった後
         else
         {
-            Debug.Log("left opponent afte game");
+            // Debug.Log("left opponent afte game");
             // Main.main.Disconnect();
         }
         PhotonNetwork.CurrentRoom.IsOpen = false;

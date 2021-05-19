@@ -62,6 +62,9 @@ public class Main : MonoBehaviourPunCallbacks
     public bool IsP1Stop { get; set; } = false;
     public bool IsP2Stop { get; set; } = false;
 
+    //スタート地点
+    Vector3 PlayerStartPos = new Vector3(0, -10, 0);
+
 
     public void Right()
     {
@@ -152,7 +155,7 @@ public class Main : MonoBehaviourPunCallbacks
 
     public void GameStart()
     {
-        photonView.RPC(nameof(SetTurnPlayer), RpcTarget.AllBuffered, (int)PlayerNum.Player1);
+        photonView.RPC(nameof(GenerateStage), RpcTarget.AllBuffered);
     }
 
     private void ChangeTurn()
@@ -183,11 +186,11 @@ public class Main : MonoBehaviourPunCallbacks
     void SetTurnPlayer(int num)
     {
         TurnPlayer = (PlayerNum)Enum.ToObject(typeof(PlayerNum), num);
-        Debug.Log("set turn player");
+        // Debug.Log("set turn player");
         //ターンプレイヤーになった人はプレイヤー生成
         if (TurnPlayer == playerNum)
         {
-            Debug.Log("you are turnplayer");
+            // Debug.Log("you are turnplayer");
             GeneratePlayer();
             countDown = null;
             countDown = CountDown();
@@ -320,15 +323,14 @@ public class Main : MonoBehaviourPunCallbacks
     //playerを生成
     public void GeneratePlayer()
     {
-        //スタート地点
-        Vector3 position = new Vector3(0, -10, 0);
+
         if (TurnPlayer == PlayerNum.Player1)
         {
-            GameObject player1 = PhotonNetwork.Instantiate("Player1", position, Quaternion.identity);
+            GameObject player1 = PhotonNetwork.Instantiate("Player1", PlayerStartPos, Quaternion.identity);
         }
         else if (TurnPlayer == PlayerNum.Player2)
         {
-            GameObject player2 = PhotonNetwork.Instantiate("Player2", position, Quaternion.identity);
+            GameObject player2 = PhotonNetwork.Instantiate("Player2", PlayerStartPos, Quaternion.identity);
         }
 
     }
@@ -432,6 +434,119 @@ public class Main : MonoBehaviourPunCallbacks
          P1Objects = new List<GameObject>();
          P2Objects = new List<GameObject>();*/
     }
+
+    [SerializeField]
+    GameObject Floor1Prefab;
+    private Vector3 StartPos = new Vector3(-7, -13, 0);
+    private Vector3 EndPos = new Vector3(7, 13, 0);
+
+    enum TileType
+    {
+        Empty,
+        Floor,
+        Wall
+    }
+
+    int width;
+    int height;
+    int mapSize;
+    int holeNum = 3;
+
+    [PunRPC]
+    public void GenerateStage()
+    {
+        width = (int)(EndPos.x - StartPos.x) + 1;
+        height = (int)(EndPos.y - StartPos.y) + 1;
+        mapSize = width * height;
+        if (!isMaster) return;
+
+
+        var FloorList = new List<(int i, int j)>();
+
+        int[,] MapData = new int[height, width];
+        int tileNum = 0;
+
+        for (int i = 0; i < height; i++)
+        {
+            for (int j = 0; j < width; j++)
+            {
+                Vector3 position = new Vector3(StartPos.x + j, StartPos.y + i, 0);
+
+                MapData[i, j] = (int)TileType.Floor;
+
+                //スタート地点の周りは安全にする
+                if ((PlayerStartPos - position).magnitude > 3)
+                {
+                    FloorList.Add((i, j));
+                }
+                tileNum++;
+
+                /* if (r == 1)
+                 {
+                     GameObject floor = Instantiate(Floor1Prefab, position, Quaternion.identity);
+                     GameObject floorArea = MyMethod.FindObject("FloorArea");
+                     floor.transform.SetParent(floorArea.transform, true);
+                 }*/
+
+
+            }
+        }
+
+
+        for (int n = 0; n < holeNum; n++)
+        {
+            int random = UnityEngine.Random.Range(0, FloorList.Count);
+            MapData[FloorList[random].i, FloorList[random].j] = (int)TileType.Empty;
+            FloorList.RemoveAt(random);
+        }
+
+
+        for (int i = 0; i < height; i++)
+        {
+            for (int j = 0; j < width; j++)
+            {
+                Vector3 position = new Vector3(StartPos.x + j, StartPos.y + i, 0);
+
+                if (MapData[i, j] == (int)TileType.Floor)
+                {
+                    GameObject floor = Instantiate(Floor1Prefab, position, Quaternion.identity);
+                    GameObject floorArea = MyMethod.FindObject("FloorArea");
+                    floor.transform.SetParent(floorArea.transform, true);
+                }
+
+            }
+        }
+
+        var MapData1D = MyMethod.ToOneDimensional(MapData);
+
+
+        photonView.RPC(nameof(ReceiveStageData), RpcTarget.OthersBuffered, MapData1D);
+    }
+
+    [PunRPC]
+    public void ReceiveStageData(int[] mapData1D)
+    {
+        var mapData2D = MyMethod.ToTowDimensional(mapData1D, width, height);
+        for (int i = 0; i < height; i++)
+        {
+            for (int j = 0; j < width; j++)
+            {
+                Vector3 position = new Vector3(StartPos.x + j, StartPos.y + i, 0);
+                if (mapData2D[i, j] == 1)
+                {
+                    GameObject floor = Instantiate(Floor1Prefab, position, Quaternion.identity);
+                    GameObject floorArea = MyMethod.FindObject("FloorArea");
+                    floor.transform.SetParent(floorArea.transform, true);
+                }
+            }
+        }
+
+        photonView.RPC(nameof(SetTurnPlayer), RpcTarget.AllBuffered, (int)PlayerNum.Player1);
+    }
+
+
+
+
 
 
     //ここから下テスト用
