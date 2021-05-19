@@ -39,10 +39,20 @@ public class MatchMaking : MonoBehaviourPunCallbacks
         // PhotonServerSettingsの設定内容を使ってマスターサーバーへ接続する
         PhotonNetwork.ConnectUsingSettings();
 
+
+        if (PhotonNetwork.CurrentRoom != null)
+        {
+            if (!PhotonNetwork.CurrentRoom.IsOpen)
+            {
+                PhotonNetwork.CurrentRoom.IsOpen = true;
+            }
+        }
+
     }
     // マスターサーバーへの接続が成功した時に呼ばれるコールバック
     public override void OnConnectedToMaster()
     {
+
         // ランダムなルームに参加する
         PhotonNetwork.JoinRandomRoom();
         //Debug.Log("connect to master");
@@ -54,19 +64,25 @@ public class MatchMaking : MonoBehaviourPunCallbacks
         // ルームの参加人数を2人に設定する
         var roomOptions = new RoomOptions();
         roomOptions.MaxPlayers = 2;
+        roomOptions.CleanupCacheOnLeave = false;
         PhotonNetwork.CreateRoom(null, roomOptions);
+
     }
 
     // ゲームサーバーへの接続が成功した時に呼ばれるコールバック
     public override void OnJoinedRoom()
     {
+
+
         if (PhotonNetwork.IsMasterClient)
         {
+            Debug.Log("roommaster");
             Main.main.isMaster = true;
             Main.main.playerNum = Main.PlayerNum.Player1;
         }
         else
         {
+            Debug.Log("roomguest");
             Main.main.isMaster = false;
             Main.main.playerNum = Main.PlayerNum.Player2;
         }
@@ -79,23 +95,34 @@ public class MatchMaking : MonoBehaviourPunCallbacks
         }
 
     }
-
+    public override void OnLeftRoom()
+    {
+        Debug.Log("I left");
+    }
     public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
     {
         Main.main.ChangeActive(Main.main.ConnectionScreen, Main.main.BattleScreen);
     }
     public override void OnPlayerLeftRoom(Photon.Realtime.Player otherPlayer)
     {
+        //バトル中
         if (Main.main.IsGameStart)
         {
             Debug.Log("left opponent in game");
-            Main.main.DisconnectInGame();
+            Main.main.OpponentLeft();
         }
+        //バトル終わった後
         else
         {
             Debug.Log("left opponent afte game");
-            Main.main.Disconnect();
+            // Main.main.Disconnect();
         }
+        PhotonNetwork.CurrentRoom.IsOpen = false;
+    }
+
+    public override void OnDisconnected(DisconnectCause cause)
+    {
+
     }
 
 }

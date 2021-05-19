@@ -369,17 +369,23 @@ public class Main : MonoBehaviourPunCallbacks
     }
     public void Disconnect()
     {
+        //PhotonNetwork.Destroy(photonView);
         PhotonNetwork.Disconnect();
     }
     public void DisconnectInGame()
     {
-        PhotonNetwork.Disconnect();
+        Disconnect();
         IsGameEnd = true;
         Winner = playerNum;
-
+    }
+    public void OpponentLeft()
+    {
+        IsGameEnd = true;
+        Winner = playerNum;
     }
     public void ReturnHome()
     {
+        PhotonNetwork.LeaveRoom();
         Disconnect();
         if (BattleScreen.activeSelf)
             ChangeActive(BattleScreen, HomeScreen);
@@ -390,7 +396,7 @@ public class Main : MonoBehaviourPunCallbacks
     }
     public void Retry()
     {
-        Disconnect();
+        PhotonNetwork.LeaveRoom();
         ChangeActive(ResultScreen, ConnectionScreen);
         Play();
     }
@@ -405,26 +411,26 @@ public class Main : MonoBehaviourPunCallbacks
     void ResetGame()
     {
         InitGame();
-
     }
     public void DestroyAll()
     {
-        if (P1Objects.Count > 0)
-        {
-            foreach (var player in P1Objects)
-            {
-                Destroy(player);
-            }
-        }
-        if (P2Objects.Count > 0)
-        {
-            foreach (var player in P2Objects)
-            {
-                Destroy(player);
-            }
-        }
-        P1Objects = new List<GameObject>();
-        P2Objects = new List<GameObject>();
+
+        /* if (P1Objects.Count > 0)
+         {
+             foreach (var player in P1Objects)
+             {
+                 Destroy(player);
+             }
+         }
+         if (P2Objects.Count > 0)
+         {
+             foreach (var player in P2Objects)
+             {
+                 Destroy(player);
+             }
+         }
+         P1Objects = new List<GameObject>();
+         P2Objects = new List<GameObject>();*/
     }
 
 
