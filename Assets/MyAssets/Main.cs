@@ -63,24 +63,10 @@ public class Main : MonoBehaviourPunCallbacks
     public bool IsP2Stop { get; set; } = false;
 
     //スタート地点
-    Vector3 PlayerStartPos = new Vector3(0, -10, 0);
+    Vector3 PlayerStartPos = new Vector3(0, -10, -3);
 
 
-    public void Right()
-    {
-        right = true;
-        left = false;
-    }
-    public void Left()
-    {
-        left = true;
-        right = false;
-    }
-    public void Stop()
-    {
-        right = false;
-        left = false;
-    }
+
     private void Awake()
     {
 
@@ -113,7 +99,7 @@ public class Main : MonoBehaviourPunCallbacks
 
     void Update()
     {
-        Debug.Log("turnplayer  " + TurnPlayer);
+        // Debug.Log("turnplayer  " + TurnPlayer);
 
         if (IsGameStart)
         {
@@ -178,7 +164,7 @@ public class Main : MonoBehaviourPunCallbacks
                 TurnPlayer = PlayerNum.Player1;
                 break;
         }
-        Debug.Log("which?" + TurnPlayer);
+
 
         photonView.RPC(nameof(SetTurnPlayer), RpcTarget.AllBuffered, (int)TurnPlayer);
     }
@@ -207,6 +193,7 @@ public class Main : MonoBehaviourPunCallbacks
             timeLimit--;
             //  Debug.Log("limit" + timeLimit);
         }
+        if (IsGameEnd) yield break;
         ChangeTurn();
     }
 
@@ -239,7 +226,6 @@ public class Main : MonoBehaviourPunCallbacks
     }
     IEnumerator CheckPlayerMotion()
     {
-        Debug.Log("checkmotion");
         int a = 0;
         while (a < 1000000)
         {
@@ -295,14 +281,13 @@ public class Main : MonoBehaviourPunCallbacks
                     photonView.RPC(nameof(ConfirmStop), RpcTarget.AllBuffered, (int)PlayerNum.Player2);
                 }
             }
-            Debug.Log("p1stop" + IsP1Stop + "  " + "p2stop" + IsP2Stop);
+
             //全員が止まってたらOK
             if (IsP1Stop && IsP2Stop)
             {
                 Debug.Log("all stop");
                 if (TurnPlayer == playerNum)
                 {
-                    Debug.Log("all stop change");
                     ChangeTurn();
                 }
                 yield break;
@@ -412,6 +397,11 @@ public class Main : MonoBehaviourPunCallbacks
     }
     void ResetGame()
     {
+        GameObject[] floorObjects = MyMethod.FindObject("FloorArea").GetComponentsInChildren<Transform>().Select(t => t.gameObject).ToArray();
+        foreach (var floorObject in floorObjects)
+        {
+            Destroy(floorObject);
+        }
         InitGame();
     }
     public void DestroyAll()
@@ -450,7 +440,7 @@ public class Main : MonoBehaviourPunCallbacks
     int width;
     int height;
     int mapSize;
-    int holeNum = 3;
+    int holeNum = 10;
 
     [PunRPC]
     public void GenerateStage()
@@ -470,7 +460,7 @@ public class Main : MonoBehaviourPunCallbacks
         {
             for (int j = 0; j < width; j++)
             {
-                Vector3 position = new Vector3(StartPos.x + j, StartPos.y + i, 0);
+                Vector3 position = new Vector3(StartPos.x + j, StartPos.y + i, StartPos.z);
 
                 MapData[i, j] = (int)TileType.Floor;
 
@@ -480,15 +470,6 @@ public class Main : MonoBehaviourPunCallbacks
                     FloorList.Add((i, j));
                 }
                 tileNum++;
-
-                /* if (r == 1)
-                 {
-                     GameObject floor = Instantiate(Floor1Prefab, position, Quaternion.identity);
-                     GameObject floorArea = MyMethod.FindObject("FloorArea");
-                     floor.transform.SetParent(floorArea.transform, true);
-                 }*/
-
-
             }
         }
 
@@ -505,7 +486,7 @@ public class Main : MonoBehaviourPunCallbacks
         {
             for (int j = 0; j < width; j++)
             {
-                Vector3 position = new Vector3(StartPos.x + j, StartPos.y + i, 0);
+                Vector3 position = new Vector3(StartPos.x + j, StartPos.y + i, StartPos.z);
 
                 if (MapData[i, j] == (int)TileType.Floor)
                 {

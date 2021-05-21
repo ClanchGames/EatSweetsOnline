@@ -23,6 +23,9 @@ public static class MyMethod
         }
     }
 
+
+
+
     /// <summary>
     /// 色を薄くするメソッド
     /// </summary>

@@ -16,12 +16,20 @@ public class CharacterController : MonoBehaviourPunCallbacks
     private float speed;
     private bool IsMine;
     private bool IsShot;
+    private bool IsCheck;
+    private bool IsShotJust;
     private bool BeforeShot = true;
 
     public bool IsStop { get; set; } = false;
 
 
     float velocity;
+    float power = 3;
+
+
+    float isStopSpeed = 2f;
+
+    Vector3 ShotPos = new Vector3();
     // Start is called before the first frame update
     void Start()
     {
@@ -29,25 +37,27 @@ public class CharacterController : MonoBehaviourPunCallbacks
         playerNum = Main.main.playerNum;
 
         rigid = GetComponent<Rigidbody>();
-        speed = 500;
+        speed = 100;
         IsMine = photonView.IsMine;
         if (IsMine)
             Main.main.AddPlayerToList(gameObject, playerNum);
     }
     private void FixedUpdate()
     {
+
+
+
         //打つまえは確認しない
         if (!IsShot) return;
-        velocity = rigid.velocity.magnitude;
 
-        if (velocity <= 0)
+        //跳ねないようにする　Z座標固定
+        if (transform.position.z <= ShotPos.z)
         {
-            IsStop = true;
+            transform.position = new Vector3(transform.position.x, transform.position.y, ShotPos.z);
         }
-        else
-        {
-            IsStop = false;
-        }
+
+
+
 
     }
     // Update is called once per frame
@@ -81,12 +91,14 @@ public class CharacterController : MonoBehaviourPunCallbacks
 
             if (distance >= 1)
             {
+                ShotPos = transform.position;
+                speed = distance * power;
 
 
-                speed = distance * 250;
-                rigid.AddForce(startDirection * speed);
+                rigid.AddForce(startDirection * speed, ForceMode.Impulse);
                 Main.main.AfterShot();
                 IsShot = true;
+                StartCoroutine(StopDelay());
             }
         }
 
@@ -99,6 +111,30 @@ public class CharacterController : MonoBehaviourPunCallbacks
 
     }
 
+    IEnumerator StopDelay()
+    {
+        yield return new WaitForSeconds(1f);
+        while (true)
+        {
+            Debug.Log("velocity" + rigid.velocity.magnitude);
+            if (rigid.velocity.magnitude <= isStopSpeed)
+            {
+                rigid.velocity = Vector3.zero;
+                IsStop = true;
+            }
+            else
+            {
+                IsStop = false;
+
+            }
+            if (IsStop)
+            {
+                yield break;
+            }
+            yield return new WaitForSeconds(1f);
+        }
+
+    }
     public void Dead()
     {
         Debug.Log("dead" + playerNum);
@@ -121,5 +157,14 @@ public class CharacterController : MonoBehaviourPunCallbacks
             }
         }
         Destroy(gameObject);
+    }
+
+    //何かに当たった時
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (!IsShot) return;
+        IsStop = false;
+        Debug.Log("collistio ncheck");
+        StartCoroutine(StopDelay());
     }
 }

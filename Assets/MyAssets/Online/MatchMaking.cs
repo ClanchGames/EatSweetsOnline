@@ -74,13 +74,13 @@ public class MatchMaking : MonoBehaviourPunCallbacks
 
         if (PhotonNetwork.IsMasterClient)
         {
-            Debug.Log("roommaster");
+            //Debug.Log("roommaster");
             Main.main.isMaster = true;
             Main.main.playerNum = Main.PlayerNum.Player1;
         }
         else
         {
-            Debug.Log("roomguest");
+            //  Debug.Log("roomguest");
             Main.main.isMaster = false;
             Main.main.playerNum = Main.PlayerNum.Player2;
         }
