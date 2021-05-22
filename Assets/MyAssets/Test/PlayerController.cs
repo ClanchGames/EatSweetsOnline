@@ -8,8 +8,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
     bool left;
     private void Update()
     {
-        right = Main.main.right;
-        left = Main.main.left;
+
         // 自身が生成したオブジェクトだけに移動処理を行う
         if (photonView.IsMine)
         {

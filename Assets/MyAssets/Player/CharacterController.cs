@@ -6,7 +6,7 @@ using Photon.Realtime;
 
 public class CharacterController : MonoBehaviourPunCallbacks
 {
-    public Main.PlayerNum playerNum;
+    PlayerNum playerNum;
 
     Rigidbody rigid;
     Vector3 mousePosition;
@@ -92,12 +92,12 @@ public class CharacterController : MonoBehaviourPunCallbacks
             {
                 ShotPos = transform.position;
                 speed = distance * power;
-
+                Debug.Log("distance" + speed);
 
                 rigid.AddForce(startDirection * speed, ForceMode.Impulse);
-                Main.main.AfterShot();
+
                 IsShot = true;
-                StartCoroutine(StopDelay());
+
             }
         }
 
@@ -110,34 +110,34 @@ public class CharacterController : MonoBehaviourPunCallbacks
 
     }
 
-    IEnumerator StopDelay()
-    {
-        yield return new WaitForSeconds(1f);
-        while (true)
-        {
-            Debug.Log("velocity" + rigid.velocity.magnitude);
-            if (rigid.velocity.magnitude <= isStopSpeed)
-            {
-                rigid.velocity = Vector3.zero;
-                IsStop = true;
-            }
-            else
-            {
-                IsStop = false;
+    /* IEnumerator StopDelay()
+     {
+         yield return new WaitForSeconds(1f);
+         while (true)
+         {
+             Debug.Log("velocity" + rigid.velocity.magnitude);
+             if (rigid.velocity.magnitude <= isStopSpeed)
+             {
+                 rigid.velocity = Vector3.zero;
+                 IsStop = true;
+             }
+             else
+             {
+                 IsStop = false;
 
-            }
-            if (IsStop)
-            {
-                yield break;
-            }
-            yield return new WaitForSeconds(1f);
-        }
+             }
+             if (IsStop)
+             {
+                 yield break;
+             }
+             yield return new WaitForSeconds(1f);
+         }
 
-    }
+     }*/
     public void Dead()
     {
         Debug.Log("dead" + playerNum);
-        if (playerNum == Main.PlayerNum.Player1)
+        if (playerNum == PlayerNum.Player1)
         {
             if (IsMine)
             {
@@ -146,7 +146,7 @@ public class CharacterController : MonoBehaviourPunCallbacks
                 Main.main.photonView.RPC(nameof(Main.main.PlayerDead), RpcTarget.AllBuffered, (int)playerNum);
             }
         }
-        else if (playerNum == Main.PlayerNum.Player2)
+        else if (playerNum == PlayerNum.Player2)
         {
             if (IsMine)
             {
@@ -161,9 +161,6 @@ public class CharacterController : MonoBehaviourPunCallbacks
     //‰½‚©‚É“–‚½‚Á‚½Žž
     private void OnCollisionEnter(Collision collision)
     {
-        if (!IsShot) return;
-        IsStop = false;
-        Debug.Log("collistio ncheck");
-        StartCoroutine(StopDelay());
+
     }
 }

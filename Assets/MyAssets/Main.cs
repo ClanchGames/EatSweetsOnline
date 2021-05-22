@@ -6,15 +6,23 @@ using Photon.Realtime;
 using static AdMob;
 using System.Linq;
 using System;
-
+public enum PlayerNum
+{
+    All = -1,
+    None = 0,
+    Player1 = 1,
+    Player2 = 2,
+    Player3 = 3,
+    Player4 = 4,
+}
 public class Main : MonoBehaviourPunCallbacks
 {
     public static Main main;
     DebugSystem debug;
     public SaveData saveData;
 
-    public bool right;
-    public bool left;
+
+    public byte MaxPlayer { get; set; }
 
     public bool IsGameStart { get; set; }
     public bool IsGameEnd { get; set; }
@@ -29,13 +37,7 @@ public class Main : MonoBehaviourPunCallbacks
 
     public string PlayerName { get; set; }
 
-    public enum PlayerNum
-    {
-        None = 0,
-        Player1 = 1,
-        Player2 = 2,
-        All = 3,
-    }
+
     public PlayerNum TurnPlayer { get; set; }
     public PlayerNum playerNum { get; set; }
 
@@ -125,6 +127,7 @@ public class Main : MonoBehaviourPunCallbacks
     /// </summary>
     public void Play()
     {
+        MaxPlayer = 2;
         IsGameStart = true;
         MatchMaking.matchMake.StartMatchMaking("aaa");
         ChangeActive(HomeScreen, ConnectionScreen);
@@ -139,36 +142,43 @@ public class Main : MonoBehaviourPunCallbacks
             trueObj.SetActive(true);
     }
 
-    public void GameStart()
+    public void StartGenerateStage()
     {
         photonView.RPC(nameof(GenerateStage), RpcTarget.AllBuffered);
     }
 
-    private void ChangeTurn()
-    {
-        //ターンプレイヤーのみが通れる。
-        if (TurnPlayer != PlayerNum.None && TurnPlayer != playerNum)
-        {
-            return;
-        }
-        //切り替え
-        switch (TurnPlayer)
-        {
-            case PlayerNum.None:
-                TurnPlayer = PlayerNum.Player1;
-                break;
-            case PlayerNum.Player1:
-                TurnPlayer = PlayerNum.Player2;
-                break;
-            case PlayerNum.Player2:
-                TurnPlayer = PlayerNum.Player1;
-                break;
-        }
-
-
-        photonView.RPC(nameof(SetTurnPlayer), RpcTarget.AllBuffered, (int)TurnPlayer);
-    }
     [PunRPC]
+    public void GameStart()
+    {
+        GeneratePlayer();
+    }
+
+
+    /* private void ChangeTurn()
+     {
+         //ターンプレイヤーのみが通れる。
+         if (TurnPlayer != PlayerNum.None && TurnPlayer != playerNum)
+         {
+             return;
+         }
+         //切り替え
+         switch (TurnPlayer)
+         {
+             case PlayerNum.None:
+                 TurnPlayer = PlayerNum.Player1;
+                 break;
+             case PlayerNum.Player1:
+                 TurnPlayer = PlayerNum.Player2;
+                 break;
+             case PlayerNum.Player2:
+                 TurnPlayer = PlayerNum.Player1;
+                 break;
+         }
+
+
+         photonView.RPC(nameof(SetTurnPlayer), RpcTarget.AllBuffered, (int)TurnPlayer);
+     }*/
+    /*[PunRPC]
     void SetTurnPlayer(int num)
     {
         TurnPlayer = (PlayerNum)Enum.ToObject(typeof(PlayerNum), num);
@@ -196,7 +206,7 @@ public class Main : MonoBehaviourPunCallbacks
         if (IsGameEnd) yield break;
         ChangeTurn();
     }
-
+    */
 
     public void AddPlayerToList(GameObject player, PlayerNum num)
     {
@@ -213,6 +223,8 @@ public class Main : MonoBehaviourPunCallbacks
         }
 
     }
+
+    /*
     public void AfterShot()
     {
         StopCoroutine(countDown);
@@ -303,21 +315,20 @@ public class Main : MonoBehaviourPunCallbacks
             IsP2Stop = true;
 
     }
-
+    */
 
     //playerを生成
     public void GeneratePlayer()
     {
 
-        if (TurnPlayer == PlayerNum.Player1)
+        if (playerNum == PlayerNum.Player1)
         {
             GameObject player1 = PhotonNetwork.Instantiate("Player1", PlayerStartPos, Quaternion.identity);
         }
-        else if (TurnPlayer == PlayerNum.Player2)
+        else if (playerNum == PlayerNum.Player2)
         {
             GameObject player2 = PhotonNetwork.Instantiate("Player2", PlayerStartPos, Quaternion.identity);
         }
-
     }
 
     [PunRPC]
@@ -443,6 +454,8 @@ public class Main : MonoBehaviourPunCallbacks
     int mapSize;
     int holeNum = 10;
 
+
+    //Masterがステージを生成
     [PunRPC]
     public void GenerateStage()
     {
@@ -501,10 +514,12 @@ public class Main : MonoBehaviourPunCallbacks
 
         var MapData1D = MyMethod.ToOneDimensional(MapData);
 
-
+        //Master以外がステージデータを受け取り生成
         photonView.RPC(nameof(ReceiveStageData), RpcTarget.OthersBuffered, MapData1D);
     }
 
+
+    //Master以外がステージデータを受け取り生成
     [PunRPC]
     public void ReceiveStageData(int[] mapData1D)
     {
@@ -523,7 +538,10 @@ public class Main : MonoBehaviourPunCallbacks
             }
         }
 
-        photonView.RPC(nameof(SetTurnPlayer), RpcTarget.AllBuffered, (int)PlayerNum.Player1);
+        // photonView.RPC(nameof(SetTurnPlayer), RpcTarget.AllBuffered, (int)PlayerNum.Player1);
+
+        //終わったらゲーム開始
+        photonView.RPC(nameof(GameStart), RpcTarget.AllBuffered);
     }
 
 
