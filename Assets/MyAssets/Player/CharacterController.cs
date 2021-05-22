@@ -24,7 +24,7 @@ public class CharacterController : MonoBehaviourPunCallbacks
 
 
     float velocity;
-    float power = 3;
+    float power = 5;
 
 
     float isStopSpeed = 2f;
@@ -37,7 +37,6 @@ public class CharacterController : MonoBehaviourPunCallbacks
         playerNum = Main.main.playerNum;
 
         rigid = GetComponent<Rigidbody>();
-        speed = 100;
         IsMine = photonView.IsMine;
         if (IsMine)
             Main.main.AddPlayerToList(gameObject, playerNum);

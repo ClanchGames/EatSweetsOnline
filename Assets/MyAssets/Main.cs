@@ -400,7 +400,8 @@ public class Main : MonoBehaviourPunCallbacks
         GameObject[] floorObjects = MyMethod.FindObject("FloorArea").GetComponentsInChildren<Transform>().Select(t => t.gameObject).ToArray();
         foreach (var floorObject in floorObjects)
         {
-            Destroy(floorObject);
+            if (floorObject.name != "FloorArea")
+                Destroy(floorObject);
         }
         InitGame();
     }
