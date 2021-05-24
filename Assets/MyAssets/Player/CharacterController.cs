@@ -15,10 +15,10 @@ public class CharacterController : MonoBehaviourPunCallbacks
 
     private float speed;
     private bool IsMine;
-    private bool IsShot;
-    private bool IsCheck;
-    private bool IsShotJust;
-    private bool BeforeShot = true;
+    // private bool IsShot;
+    // private bool IsCheck;
+    //  private bool IsShotJust;
+    // private bool BeforeShot = true;
 
     public bool IsStop { get; set; } = false;
 
@@ -46,8 +46,7 @@ public class CharacterController : MonoBehaviourPunCallbacks
 
 
 
-        //打つまえは確認しない
-        if (!IsShot) return;
+
 
         //跳ねないようにする　Z座標固定
         if (transform.position.z <= ShotPos.z)
@@ -62,14 +61,11 @@ public class CharacterController : MonoBehaviourPunCallbacks
     // Update is called once per frame
     void Update()
     {
-        // Debug.Log("isyourturn:" + Main.main.IsYourTurn);
 
         //自分のじゃないならreturn
         if (!IsMine) return;
-        //自分のターンじゃないならreturn
-        if (!Main.main.IsYourTurn) return;
-        //打ち終わったらもう打てない
-        if (IsShot) return;
+        //ゲームが始まる前は動かさない
+        if (!Main.main.IsGameStart) return;
 
         mousePosition = Input.mousePosition;
         mousePosition.z = 10;

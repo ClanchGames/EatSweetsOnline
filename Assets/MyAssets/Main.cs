@@ -24,6 +24,7 @@ public class Main : MonoBehaviourPunCallbacks
 
     public byte MaxPlayer { get; set; }
 
+    public bool IsPressPlay { get; set; }
     public bool IsGameStart { get; set; }
     public bool IsGameEnd { get; set; }
 
@@ -65,7 +66,13 @@ public class Main : MonoBehaviourPunCallbacks
     public bool IsP2Stop { get; set; } = false;
 
     //スタート地点
-    Vector3 PlayerStartPos = new Vector3(0, -10, -3);
+    Vector3 Player1StartPos = new Vector3(-5, -11, -3);
+    Vector3 Player2StartPos = new Vector3(5, 11, -3);
+    Vector3 Player3StartPos = new Vector3(5, -11, -3);
+    Vector3 Player4StartPos = new Vector3(-5, 11, -3);
+
+    //この座標の周りは穴をあけない　壁も作らない
+    List<Vector3> SafeZone = new List<Vector3>();
 
 
 
@@ -95,7 +102,13 @@ public class Main : MonoBehaviourPunCallbacks
     }
     void Start()
     {
-
+        if (SafeZone.Count == 0)
+        {
+            SafeZone.Add(Player1StartPos);
+            SafeZone.Add(Player2StartPos);
+            SafeZone.Add(Player3StartPos);
+            SafeZone.Add(Player4StartPos);
+        }
     }
 
 
@@ -128,7 +141,7 @@ public class Main : MonoBehaviourPunCallbacks
     public void Play()
     {
         MaxPlayer = 2;
-        IsGameStart = true;
+        IsPressPlay = true;
         MatchMaking.matchMake.StartMatchMaking("aaa");
         ChangeActive(HomeScreen, ConnectionScreen);
         ResetGame();
@@ -150,6 +163,7 @@ public class Main : MonoBehaviourPunCallbacks
     [PunRPC]
     public void GameStart()
     {
+        IsGameStart = true;
         GeneratePlayer();
     }
 
@@ -323,11 +337,11 @@ public class Main : MonoBehaviourPunCallbacks
 
         if (playerNum == PlayerNum.Player1)
         {
-            GameObject player1 = PhotonNetwork.Instantiate("Player1", PlayerStartPos, Quaternion.identity);
+            GameObject player1 = PhotonNetwork.Instantiate("Player1", Player1StartPos, Quaternion.identity);
         }
         else if (playerNum == PlayerNum.Player2)
         {
-            GameObject player2 = PhotonNetwork.Instantiate("Player2", PlayerStartPos, Quaternion.identity);
+            GameObject player2 = PhotonNetwork.Instantiate("Player2", Player2StartPos, Quaternion.identity);
         }
     }
 
@@ -349,6 +363,7 @@ public class Main : MonoBehaviourPunCallbacks
     public void GameSet()
     {
         IsGameStart = false;
+        IsPressPlay = false;
         IsGameEnd = false;
         ChangeActive(BattleScreen, ResultScreen);
         if (Player1Life <= 0)
@@ -464,7 +479,7 @@ public class Main : MonoBehaviourPunCallbacks
         mapSize = width * height;
         if (!isMaster) return;
 
-
+        //ここに追加された座標からランダムに穴をあける座標を選ぶ
         var FloorList = new List<(int i, int j)>();
 
         int[,] MapData = new int[height, width];
@@ -476,26 +491,47 @@ public class Main : MonoBehaviourPunCallbacks
             {
                 Vector3 position = new Vector3(StartPos.x + j, StartPos.y + i, StartPos.z);
 
+                //とりあえず全座標をMapDataに入れる
                 MapData[i, j] = (int)TileType.Floor;
 
+                bool IsSafe = true;
+
                 //スタート地点の周りは安全にする
-                if ((PlayerStartPos - position).magnitude > 3)
+                foreach (var pos in SafeZone)
                 {
+                    Debug.Log((pos - position).magnitude);
+                    //スタート地点と離れているか確認
+                    if ((pos - position).magnitude < 5)
+                    {
+                        //一か所でもスタート地点と近かったらfalseして抜け出す
+                        IsSafe = false;
+                        break;
+                    }
+                }
+
+                if (!IsSafe)
+                {
+                    //SafeZoneじゃないなら追加する
                     FloorList.Add((i, j));
                 }
+
                 tileNum++;
             }
         }
 
 
+        //ランダムに穴をあける
         for (int n = 0; n < holeNum; n++)
         {
             int random = UnityEngine.Random.Range(0, FloorList.Count);
             MapData[FloorList[random].i, FloorList[random].j] = (int)TileType.Empty;
+
+
             FloorList.RemoveAt(random);
         }
 
 
+        //MapDataに入っている情報通りに生成
         for (int i = 0; i < height; i++)
         {
             for (int j = 0; j < width; j++)
@@ -529,7 +565,7 @@ public class Main : MonoBehaviourPunCallbacks
             for (int j = 0; j < width; j++)
             {
                 Vector3 position = new Vector3(StartPos.x + j, StartPos.y + i, 0);
-                if (mapData2D[i, j] == 1)
+                if (mapData2D[i, j] == (int)TileType.Floor)
                 {
                     GameObject floor = Instantiate(Floor1Prefab, position, Quaternion.identity);
                     GameObject floorArea = MyMethod.FindObject("FloorArea");
