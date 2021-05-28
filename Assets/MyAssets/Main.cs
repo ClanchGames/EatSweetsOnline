@@ -66,8 +66,8 @@ public class Main : MonoBehaviourPunCallbacks
     public bool IsP2Stop { get; set; } = false;
 
     //スタート地点
-    Vector3 Player1StartPos = new Vector3(-5, -11, -4);
-    Vector3 Player2StartPos = new Vector3(5, 11, -4);
+    Vector3 Player1StartPos = new Vector3(-0.6f, -3.5f, 0);
+    Vector3 Player2StartPos = new Vector3(0.6f, -3.5f, 0);
     Vector3 Player3StartPos = new Vector3(5, -11, -4);
     Vector3 Player4StartPos = new Vector3(-5, 11, -4);
 

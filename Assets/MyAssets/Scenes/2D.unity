@@ -759,6 +759,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 229219986}
     m_Modifications:
+    - target: {fileID: -1010577746209869693, guid: 65a1a9ff58ddff043a7d93db60bd63ea, type: 3}
+      propertyPath: sceneViewId
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 1848359929749251698, guid: 65a1a9ff58ddff043a7d93db60bd63ea, type: 3}
       propertyPath: m_Name
       value: Player
@@ -3874,7 +3878,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.1
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -3973,7 +3977,7 @@ MonoBehaviour:
   GameOverSE: {fileID: 8300000, guid: 75099d789f3a757459399cc78690575b, type: 3}
   GameClearSE: {fileID: 8300000, guid: db4ec357d3cb4ab448116b4881a843d4, type: 3}
   PopSE: {fileID: 8300000, guid: e2714ae7640ef4b43b3a34d0d4ddd93b, type: 3}
-  CountDownSE: {fileID: 0}
+  CountDownSE: {fileID: 8300000, guid: 1e35f50de6f6c5743aa3ed14bff3d98c, type: 3}
   delay: 0.06
 --- !u!4 &839983738
 Transform:
@@ -3999,7 +4003,6 @@ GameObject:
   m_Component:
   - component: {fileID: 888541855}
   - component: {fileID: 888541854}
-  - component: {fileID: 888541853}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -4007,14 +4010,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!81 &888541853
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 888541852}
-  m_Enabled: 1
 --- !u!20 &888541854
 Camera:
   m_ObjectHideFlags: 0
@@ -4255,17 +4250,21 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 229219986}
     m_Modifications:
+    - target: {fileID: 1666549879006660382, guid: acd5b54f7a959fc489b01db7eb09f405, type: 3}
+      propertyPath: sceneViewId
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 7925278414247349620, guid: acd5b54f7a959fc489b01db7eb09f405, type: 3}
       propertyPath: m_RootOrder
       value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 7925278414247349620, guid: acd5b54f7a959fc489b01db7eb09f405, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 0.6
       objectReference: {fileID: 0}
     - target: {fileID: 7925278414247349620, guid: acd5b54f7a959fc489b01db7eb09f405, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -4
+      value: -3.5
       objectReference: {fileID: 0}
     - target: {fileID: 7925278414247349620, guid: acd5b54f7a959fc489b01db7eb09f405, type: 3}
       propertyPath: m_LocalPosition.z
@@ -4741,8 +4740,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 1556678453
+  m_SortingLayer: 1
   m_SortingOrder: 1
   m_Sprite: {fileID: 7482667652216324306, guid: 48e93eef0688c4a259cb0eddcd8661f7, type: 3}
   m_Color: {r: 1, g: 0, b: 0.60661507, a: 1}
@@ -5203,8 +5202,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 1556678453
+  m_SortingLayer: 1
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: d9b0a0dc2578b3e44b1dd00a404b2c93, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -5727,9 +5726,9 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingLayerID: 1556678453
+  m_SortingLayer: 1
+  m_SortingOrder: -1
   m_Sprite: {fileID: 21300000, guid: f222fb00e3182624888826a2fc58db96, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -8279,8 +8278,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 1556678453
+  m_SortingLayer: 1
   m_SortingOrder: 1
   m_Sprite: {fileID: 7482667652216324306, guid: 48e93eef0688c4a259cb0eddcd8661f7, type: 3}
   m_Color: {r: 1, g: 0, b: 0.60661507, a: 1}
@@ -8750,6 +8749,7 @@ GameObject:
   - component: {fileID: 2056383538}
   - component: {fileID: 2056383540}
   - component: {fileID: 2056383539}
+  - component: {fileID: 2056383541}
   m_Layer: 5
   m_Name: TimeLimit
   m_TagString: Untagged
@@ -8873,6 +8873,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2056383537}
   m_CullTransparentMesh: 1
+--- !u!114 &2056383541
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2056383537}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 132f9271756a4eb4fa2bc79bc0e2c67a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2061397586
 GameObject:
   m_ObjectHideFlags: 0
@@ -9495,17 +9507,21 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 229219986}
     m_Modifications:
+    - target: {fileID: -1010577746209869693, guid: 65a1a9ff58ddff043a7d93db60bd63ea, type: 3}
+      propertyPath: sceneViewId
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7925278414247349620, guid: 65a1a9ff58ddff043a7d93db60bd63ea, type: 3}
       propertyPath: m_RootOrder
       value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 7925278414247349620, guid: 65a1a9ff58ddff043a7d93db60bd63ea, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1
+      value: -0.6
       objectReference: {fileID: 0}
     - target: {fileID: 7925278414247349620, guid: 65a1a9ff58ddff043a7d93db60bd63ea, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -4
+      value: -3.5
       objectReference: {fileID: 0}
     - target: {fileID: 7925278414247349620, guid: 65a1a9ff58ddff043a7d93db60bd63ea, type: 3}
       propertyPath: m_LocalPosition.z
