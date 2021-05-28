@@ -136,13 +136,13 @@ public class Main : MonoBehaviourPunCallbacks
         }
     }
     /// <summary>
-    /// ゲームスタート
+    /// スタートボタンを押す処理
     /// </summary>
     public void Play()
     {
         MaxPlayer = 2;
         IsPressPlay = true;
-        MatchMaking.matchMake.StartMatchMaking("aaa");
+        MatchMaking.matchMake.StartMatchMaking("Game");
         ChangeActive(HomeScreen, ConnectionScreen);
         ResetGame();
     }
