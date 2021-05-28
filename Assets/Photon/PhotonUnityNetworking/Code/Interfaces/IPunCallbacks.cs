@@ -76,7 +76,7 @@ namespace Photon.Pun
         /// <param name="targetView">PhotonView for which ownership changed.</param>
         /// <param name="previousOwner">Player who was the previous owner (or null, if none).</param>
         void OnOwnershipTransfered(PhotonView targetView, Player previousOwner);
-        
+
         /// <summary>
         /// Called when an Ownership Request fails for objects with "takeover" setting.
         /// </summary>
@@ -87,6 +87,7 @@ namespace Photon.Pun
         /// <param name="targetView"></param>
         /// <param name="senderOfFailedRequest"></param>
         void OnOwnershipTransferFailed(PhotonView targetView, Player senderOfFailedRequest);
+
     }
 
     /// \ingroup callbacks

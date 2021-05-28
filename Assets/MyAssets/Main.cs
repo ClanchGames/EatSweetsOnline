@@ -66,10 +66,10 @@ public class Main : MonoBehaviourPunCallbacks
     public bool IsP2Stop { get; set; } = false;
 
     //スタート地点
-    Vector3 Player1StartPos = new Vector3(-5, -11, -3);
-    Vector3 Player2StartPos = new Vector3(5, 11, -3);
-    Vector3 Player3StartPos = new Vector3(5, -11, -3);
-    Vector3 Player4StartPos = new Vector3(-5, 11, -3);
+    Vector3 Player1StartPos = new Vector3(-5, -11, -4);
+    Vector3 Player2StartPos = new Vector3(5, 11, -4);
+    Vector3 Player3StartPos = new Vector3(5, -11, -4);
+    Vector3 Player4StartPos = new Vector3(-5, 11, -4);
 
     //この座標の周りは穴をあけない　壁も作らない
     List<Vector3> SafeZone = new List<Vector3>();
@@ -160,13 +160,20 @@ public class Main : MonoBehaviourPunCallbacks
         photonView.RPC(nameof(GenerateStage), RpcTarget.AllBuffered);
     }
 
+
+
     [PunRPC]
     public void GameStart()
     {
-        IsGameStart = true;
+        StartCoroutine(GameStartDelay());
         GeneratePlayer();
     }
-
+    IEnumerator GameStartDelay()
+    {
+        SE.se.CountDown();
+        yield return new WaitForSeconds(3f);
+        IsGameStart = true;
+    }
 
     /* private void ChangeTurn()
      {
@@ -423,12 +430,12 @@ public class Main : MonoBehaviourPunCallbacks
     }
     void ResetGame()
     {
-        GameObject[] floorObjects = MyMethod.FindObject("FloorArea").GetComponentsInChildren<Transform>().Select(t => t.gameObject).ToArray();
-        foreach (var floorObject in floorObjects)
-        {
-            if (floorObject.name != "FloorArea")
-                Destroy(floorObject);
-        }
+        /*  GameObject[] floorObjects = MyMethod.FindObject("FloorArea").GetComponentsInChildren<Transform>().Select(t => t.gameObject).ToArray();
+          foreach (var floorObject in floorObjects)
+          {
+              if (floorObject.name != "FloorArea")
+                  Destroy(floorObject);
+          }*/
         InitGame();
     }
     public void DestroyAll()
@@ -499,7 +506,7 @@ public class Main : MonoBehaviourPunCallbacks
                 //スタート地点の周りは安全にする
                 foreach (var pos in SafeZone)
                 {
-                    Debug.Log((pos - position).magnitude);
+
                     //スタート地点と離れているか確認
                     if ((pos - position).magnitude < 5)
                     {

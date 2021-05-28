@@ -85,7 +85,8 @@ public class MatchMaking : MonoBehaviourPunCallbacks
         if (PhotonNetwork.CurrentRoom.PlayerCount == PhotonNetwork.CurrentRoom.MaxPlayers)
         {
             Main.main.ChangeActive(Main.main.ConnectionScreen, Main.main.BattleScreen);
-            Main.main.StartGenerateStage();
+            // Main.main.StartGenerateStage();
+            Main.main.photonView.RPC(nameof(Main.main.GameStart), RpcTarget.AllBuffered);
         }
 
     }

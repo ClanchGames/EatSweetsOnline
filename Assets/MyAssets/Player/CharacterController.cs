@@ -4,7 +4,7 @@ using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
 
-public class CharacterController : MonoBehaviourPunCallbacks
+public class CharacterController : MonoBehaviourPun
 {
     PlayerNum playerNum;
 
@@ -15,46 +15,71 @@ public class CharacterController : MonoBehaviourPunCallbacks
 
     private float speed;
     private bool IsMine;
-    // private bool IsShot;
-    // private bool IsCheck;
-    //  private bool IsShotJust;
-    // private bool BeforeShot = true;
 
-    public bool IsStop { get; set; } = false;
+
 
 
     float velocity;
     float power = 5;
 
+    //減速させる力
+    float decelerate = 0.9f;
 
     float isStopSpeed = 2f;
 
+    bool IsCheckHeight = false;
+    float startHeight;
     Vector3 ShotPos = new Vector3();
+    public float pushPower { get; set; }
+
+    public bool WhileHit { get; set; } = false;
+    float BasicSpeed = 3f;
+
+    // private bool isSyncing = true; // 同期フラグ
     // Start is called before the first frame update
     void Start()
     {
-
+        PhotonNetwork.AddCallbackTarget(this);
         playerNum = Main.main.playerNum;
 
         rigid = GetComponent<Rigidbody>();
         IsMine = photonView.IsMine;
         if (IsMine)
+        {
             Main.main.AddPlayerToList(gameObject, playerNum);
+        }
     }
     private void FixedUpdate()
     {
 
-
+        //自分のじゃないならreturn
+        if (!IsMine) return;
+        //ゲームが始まる前は動かさない
+        if (!Main.main.IsGameStart) return;
 
 
 
         //跳ねないようにする　Z座標固定
-        if (transform.position.z <= ShotPos.z)
+        if (transform.position.z <= startHeight)
         {
-            transform.position = new Vector3(transform.position.x, transform.position.y, ShotPos.z);
+            transform.position = new Vector3(transform.position.x, transform.position.y, startHeight);
         }
 
 
+
+
+
+        //ちょっとづつ減速させる
+        if (rigid.velocity.magnitude > 0)
+        {
+            rigid.velocity *= decelerate;
+            pushPower = rigid.velocity.magnitude;
+
+            if (rigid.velocity.magnitude < BasicSpeed)
+            {
+                WhileHit = false;
+            }
+        }
 
 
     }
@@ -63,14 +88,23 @@ public class CharacterController : MonoBehaviourPunCallbacks
     {
 
         //自分のじゃないならreturn
-        if (!IsMine) return;
+        if (!IsMine)
+        {
+
+            return;
+        }
+        else
+        {
+
+        }
         //ゲームが始まる前は動かさない
         if (!Main.main.IsGameStart) return;
+        //ぶつけられたら動けない
+        if (WhileHit) return;
 
         mousePosition = Input.mousePosition;
         mousePosition.z = 10;
         mouseWorldPosition = Camera.main.ScreenToWorldPoint(mousePosition);
-
 
         //引っ張り始める
         if (Input.GetMouseButtonDown(0))
@@ -88,51 +122,24 @@ public class CharacterController : MonoBehaviourPunCallbacks
             {
                 ShotPos = transform.position;
                 speed = distance * power;
-                Debug.Log("distance" + speed);
-
                 rigid.AddForce(startDirection * speed, ForceMode.Impulse);
-
-                IsShot = true;
-
             }
         }
 
 
-        if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(1))
-        {
-            //完全に止める
-            rigid.velocity = new Vector3(0, 0, 0);
-        }
+
+
 
     }
 
-    /* IEnumerator StopDelay()
-     {
-         yield return new WaitForSeconds(1f);
-         while (true)
-         {
-             Debug.Log("velocity" + rigid.velocity.magnitude);
-             if (rigid.velocity.magnitude <= isStopSpeed)
-             {
-                 rigid.velocity = Vector3.zero;
-                 IsStop = true;
-             }
-             else
-             {
-                 IsStop = false;
+    IEnumerator ChangeTriggerDelay()
+    {
+        yield return new WaitForSeconds(0.5f);
 
-             }
-             if (IsStop)
-             {
-                 yield break;
-             }
-             yield return new WaitForSeconds(1f);
-         }
+    }
 
-     }*/
     public void Dead()
     {
-        Debug.Log("dead" + playerNum);
         if (playerNum == PlayerNum.Player1)
         {
             if (IsMine)
@@ -151,12 +158,75 @@ public class CharacterController : MonoBehaviourPunCallbacks
                 Main.main.photonView.RPC(nameof(Main.main.PlayerDead), RpcTarget.AllBuffered, (int)playerNum);
             }
         }
+        PhotonNetwork.RemoveCallbackTarget(this);
         Destroy(gameObject);
     }
 
     //何かに当たった時
     private void OnCollisionEnter(Collision collision)
     {
+        //ゲーム開始時地面に当たった時
+        if (!Main.main.IsGameStart && !IsCheckHeight)
+        {
+            IsCheckHeight = true;
+            startHeight = transform.position.z;
+        }
 
+        //他プレイヤーに当てられた場合
+        if (collision.gameObject.tag == "Player")
+        {
+            Debug.Log(collision.gameObject.name);
+            if (IsMine)
+            {
+
+                Rigidbody otherRigid = collision.gameObject.GetComponent<Rigidbody>();
+
+                CharacterController otherCharacter = collision.gameObject.GetComponent<CharacterController>();
+
+                /*  float OtherSpeed = otherRigid.velocity.magnitude;
+                  //自分の方が遅かったらreturn
+                  if (OtherSpeed >= rigid.velocity.magnitude)
+                  {
+                      Debug.Log("rigid" + rigid.velocity.magnitude);
+                      Debug.Log("otherrigid" + OtherSpeed);
+                      Debug.Log(gameObject.name + "の方がおそい");
+                      return;
+                  }*/
+
+
+                Vector3 OtherPos = collision.transform.position;
+                Vector3 Distance = transform.position - OtherPos;
+                Vector3 Direction = Distance.normalized;
+                Vector3 PushPower = Direction * pushPower * 100;
+
+                float[] PushPowerFloat = new float[3];
+                PushPowerFloat[0] = PushPower.x;
+                PushPowerFloat[1] = PushPower.y;
+                PushPowerFloat[2] = PushPower.z;
+
+
+
+                photonView.RPC(nameof(Hit), RpcTarget.OthersBuffered, PushPowerFloat);
+            }
+        }
     }
+
+
+    [PunRPC]
+    public void Hit(float[] PushPowerFloat)
+    {
+
+        WhileHit = true;
+        Vector3 PushPower = new Vector3(PushPowerFloat[0], PushPowerFloat[1], PushPowerFloat[2]);
+        rigid.AddForce(PushPower);
+        Debug.Log("in" + PushPower + gameObject.name);
+    }
+
+
+
+
 }
+
+
+
+

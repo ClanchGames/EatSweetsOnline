@@ -10,6 +10,7 @@ public class SE : MonoBehaviour
     public AudioClip GameOverSE;
     public AudioClip GameClearSE;
     public AudioClip PopSE;
+    public AudioClip CountDownSE;
     AudioSource audioSource;
 
     [SerializeField]
@@ -57,10 +58,16 @@ public class SE : MonoBehaviour
     /// <param name="audioClip"></param>
     public void PlaySE(AudioClip audioClip)
     {
+        //‚ ‚Ü‚è‚É‚àŠÔŠu‚ª’Z‚¢Žž‚Í‰¹Š„‚ê–hŽ~‚Ì‚½‚ß–Â‚ç‚³‚È‚¢
         if (Time.realtimeSinceStartup - realtimelastplay > delay)
         {
             realtimelastplay = Time.realtimeSinceStartup;
             audioSource.PlayOneShot(audioClip);
         }
+    }
+
+    public void CountDown()
+    {
+        PlaySE(CountDownSE);
     }
 }
