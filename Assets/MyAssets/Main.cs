@@ -8,12 +8,12 @@ using System.Linq;
 using System;
 public enum PlayerNum
 {
-    All = -1,
-    None = 0,
-    Player1 = 1,
-    Player2 = 2,
-    Player3 = 3,
-    Player4 = 4,
+    All = 100,
+    None = -1,
+    Player1 = 0,
+    Player2 = 1,
+    Player3 = 2,
+    Player4 = 3,
 }
 public class Main : MonoBehaviourPunCallbacks
 {
@@ -30,9 +30,7 @@ public class Main : MonoBehaviourPunCallbacks
 
 
     public bool isMaster { get; set; }
-    public int Player1Life { get; set; }
-    public int Player2Life { get; set; }
-    int playerStartLife = 1;
+
 
     public PlayerNum Winner { get; set; } = PlayerNum.None;
 
@@ -118,7 +116,7 @@ public class Main : MonoBehaviourPunCallbacks
 
         if (IsGameStart)
         {
-            if (Player1Life <= 0 || Player2Life <= 0 || IsGameEnd)
+            if (IsGameEnd)
             {
                 GameSet();
             }
@@ -220,18 +218,7 @@ public class Main : MonoBehaviourPunCallbacks
         }
     }
 
-    [PunRPC]
-    public void PlayerDead(int playernum)
-    {
-        if (playernum == (int)PlayerNum.Player1)
-        {
-            Player1Life--;
-        }
-        else if (playernum == (int)PlayerNum.Player2)
-        {
-            Player2Life--;
-        }
-    }
+
 
 
 
@@ -241,19 +228,7 @@ public class Main : MonoBehaviourPunCallbacks
         IsPressPlay = false;
         IsGameEnd = false;
         ChangeActive(BattleScreen, ResultScreen);
-        if (Player1Life <= 0)
-        {
-            Winner = PlayerNum.Player2;
-        }
-        if (Player2Life <= 0)
-        {
-            Winner = PlayerNum.Player1;
-        }
 
-        if (Player1Life <= 0 && Player2Life <= 0)
-        {
-            Winner = PlayerNum.All;
-        }
     }
     public void Disconnect()
     {
@@ -293,8 +268,7 @@ public class Main : MonoBehaviourPunCallbacks
     {
         TurnPlayer = PlayerNum.None;
         Winner = PlayerNum.None;
-        Player1Life = playerStartLife;
-        Player2Life = playerStartLife;
+        PlayerScore = new int[4];
     }
     void ResetGame()
     {
@@ -332,6 +306,17 @@ public class Main : MonoBehaviourPunCallbacks
         }
     }
 
+    public int[] PlayerScore = new int[4];
+    public int P1Score;
+    public int P2Score;
+    public int P3Score;
+    public int P4Score;
+
+    [PunRPC]
+    public void GetScore(int[] PlayerAndScore)
+    {
+        PlayerScore[PlayerAndScore[0]] += PlayerAndScore[1];
+    }
 
 
 

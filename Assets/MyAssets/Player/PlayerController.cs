@@ -104,14 +104,21 @@ public class PlayerController : MonoBehaviourPunCallbacks
         height = transform.position.y;
     }
 
-    public void GetSweets()
+    public void GetSweets(int score)
     {
         Debug.Log("getsweets");
+        int[] PlayerAndScore = new int[2];
+        PlayerAndScore[0] = (int)Main.main.playerNum;
+        PlayerAndScore[1] = score;
+        Main.main.photonView.RPC(nameof(Main.main.GetScore), RpcTarget.AllBuffered, PlayerAndScore);
     }
 
     public bool isHit = false;
-    public void HitBomb()
+
+    [PunRPC]
+    public void HitBomb(int viewID)
     {
+        if (photonView.ViewID != viewID) return;
         Debug.Log("hitbomb");
         float interval = 0.1f;
         float time = 2f;

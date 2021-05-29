@@ -69,7 +69,7 @@ public class MatchMaking : MonoBehaviourPunCallbacks
     // ゲームサーバーへの接続が成功した時に呼ばれるコールバック
     public override void OnJoinedRoom()
     {
-        Main.main.playerNum = (PlayerNum)Enum.ToObject(typeof(PlayerNum), (int)PhotonNetwork.CurrentRoom.PlayerCount);
+        Main.main.playerNum = (PlayerNum)Enum.ToObject(typeof(PlayerNum), PhotonNetwork.CurrentRoom.PlayerCount - 1);
         Debug.Log(Main.main.playerNum);
 
         if (PhotonNetwork.IsMasterClient)

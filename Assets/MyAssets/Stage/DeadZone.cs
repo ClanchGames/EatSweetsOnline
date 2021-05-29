@@ -19,7 +19,7 @@ public class DeadZone : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
 
-        collision.gameObject.GetComponent<CharacterController>().Dead();
+
     }
 
 }

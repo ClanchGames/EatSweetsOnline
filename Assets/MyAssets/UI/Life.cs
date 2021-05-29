@@ -21,11 +21,11 @@ public class Life : MonoBehaviour
     {
         if (isplayer1)
         {
-            lifeText.text = Main.main.Player1Life.ToString();
+
         }
         else
         {
-            lifeText.text = Main.main.Player2Life.ToString();
+
         }
         /* if (IsYours)
          {
