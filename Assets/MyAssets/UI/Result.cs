@@ -14,11 +14,8 @@ public class Result : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Main.main.Winner == PlayerNum.All)
-        {
-            result.text = "Draw";
-        }
-        else if (Main.main.Winner == Main.main.playerNum)
+
+        if (Main.main.Winner == Main.main.playerNum)
         {
             result.text = "Win";
         }

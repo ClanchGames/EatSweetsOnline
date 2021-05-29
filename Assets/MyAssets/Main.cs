@@ -27,11 +27,13 @@ public class Main : MonoBehaviourPunCallbacks
     public bool IsPressPlay { get; set; }
     public bool IsGameStart { get; set; }
     public bool IsGameEnd { get; set; }
+    public bool IsSuddenDeath { get; set; }
 
 
     public bool isMaster { get; set; }
 
 
+    List<PlayerNum> WinnerList = new List<PlayerNum>();
     public PlayerNum Winner { get; set; } = PlayerNum.None;
 
     public string PlayerName { get; set; }
@@ -40,16 +42,10 @@ public class Main : MonoBehaviourPunCallbacks
     public PlayerNum TurnPlayer { get; set; }
     public PlayerNum playerNum { get; set; }
 
-    public bool IsYourTurn
-    {
-        get
-        {
-            return isMaster && TurnPlayer == PlayerNum.Player1 || !isMaster && TurnPlayer == PlayerNum.Player2;
-        }
-    }
+
 
     public int timeLimit { get; set; }
-    private IEnumerator countDown;
+
 
 
 
@@ -60,8 +56,7 @@ public class Main : MonoBehaviourPunCallbacks
 
     public List<GameObject> P1Objects = new List<GameObject>();
     public List<GameObject> P2Objects = new List<GameObject>();
-    public bool IsP1Stop { get; set; } = false;
-    public bool IsP2Stop { get; set; } = false;
+
 
     //スタート地点
     Vector3 Player1StartPos = new Vector3(-0.6f, -3.5f, 0);
@@ -69,8 +64,6 @@ public class Main : MonoBehaviourPunCallbacks
     Vector3 Player3StartPos = new Vector3(5, -11, -4);
     Vector3 Player4StartPos = new Vector3(-5, 11, -4);
 
-    //この座標の周りは穴をあけない　壁も作らない
-    List<Vector3> SafeZone = new List<Vector3>();
 
 
 
@@ -100,13 +93,7 @@ public class Main : MonoBehaviourPunCallbacks
     }
     void Start()
     {
-        if (SafeZone.Count == 0)
-        {
-            SafeZone.Add(Player1StartPos);
-            SafeZone.Add(Player2StartPos);
-            SafeZone.Add(Player3StartPos);
-            SafeZone.Add(Player4StartPos);
-        }
+
     }
 
 
@@ -118,7 +105,16 @@ public class Main : MonoBehaviourPunCallbacks
         {
             if (IsGameEnd)
             {
-                GameSet();
+                if (CheckScore())
+                {
+                    GameSet();
+                }
+                else
+                {
+                    StartSuddenDeath();
+                }
+                Debug.Log(CheckScore());
+
             }
         }
 
@@ -142,7 +138,7 @@ public class Main : MonoBehaviourPunCallbacks
         IsPressPlay = true;
         MatchMaking.matchMake.StartMatchMaking("Game");
         ChangeActive(HomeScreen, ConnectionScreen);
-        ResetGame();
+        InitGame();
     }
 
     public void ChangeActive(GameObject falseObj, GameObject trueObj)
@@ -167,6 +163,7 @@ public class Main : MonoBehaviourPunCallbacks
         SE.se.CountDown();
         yield return new WaitForSeconds(3f);
         IsGameStart = true;
+        StartCoroutine(TimeLimitCount());
         if (isMaster)
         {
             StartCoroutine(GenerateSweets());
@@ -180,8 +177,61 @@ public class Main : MonoBehaviourPunCallbacks
     {
         while (true)
         {
-
+            timeLimit--;
+            if (timeLimit <= 0)
+            {
+                IsGameEnd = true;
+                yield break;
+            }
+            yield return new WaitForSeconds(1f);
         }
+    }
+    bool CheckScore()
+    {
+        int highestScore = 0;
+        //誰が一番得点が高いか調べる 部屋にいる人数分まで
+        for (int i = 0; i < PhotonNetwork.CurrentRoom.PlayerCount; i++)
+        {
+            //ハイスコア以上なら確認
+            if (highestScore <= PlayerScore[i])
+            {
+                //とりあえずハイスコア保存
+                highestScore = PlayerScore[i];
+
+                //上回っていれば、勝者は自分だけにする
+                if (highestScore < PlayerScore[i])
+                {
+                    WinnerList.Clear();
+                }
+                //同率一位なら何もしない
+                else if (highestScore == PlayerScore[i])
+                {
+
+                }
+                WinnerList.Add((PlayerNum)Enum.ToObject(typeof(PlayerNum), i));
+                if (highestScore == 0)
+                {
+                    WinnerList.Clear();
+                }
+            }
+        }
+
+        Debug.Log("winner count" + WinnerList.Count);
+        if (WinnerList.Count == 1)
+        {
+            Winner = WinnerList[0];
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+
+    }
+    void StartSuddenDeath()
+    {
+        IsSuddenDeath = true;
+        IsGameEnd = false;
     }
 
 
@@ -221,13 +271,14 @@ public class Main : MonoBehaviourPunCallbacks
 
 
 
-
     public void GameSet()
     {
         IsGameStart = false;
         IsPressPlay = false;
         IsGameEnd = false;
         ChangeActive(BattleScreen, ResultScreen);
+
+
 
     }
     public void Disconnect()
@@ -255,7 +306,7 @@ public class Main : MonoBehaviourPunCallbacks
         else if (ResultScreen.activeSelf)
             ChangeActive(ResultScreen, HomeScreen);
 
-        ResetGame();
+        InitGame();
     }
     public void Retry()
     {
@@ -266,14 +317,12 @@ public class Main : MonoBehaviourPunCallbacks
 
     void InitGame()
     {
-        TurnPlayer = PlayerNum.None;
+        WinnerList.Clear();
         Winner = PlayerNum.None;
         PlayerScore = new int[4];
+        timeLimit = 3;
     }
-    void ResetGame()
-    {
-        InitGame();
-    }
+
 
 
     public GameObject SweetsPrefab;
@@ -285,7 +334,7 @@ public class Main : MonoBehaviourPunCallbacks
 
     IEnumerator GenerateSweets()
     {
-        while (true)
+        while (IsGameStart)
         {
             float xpos = UnityEngine.Random.Range(-1.9f, 1.9f);
             GameObject Sweets = PhotonNetwork.Instantiate("Sweets", new Vector3(xpos, 5.5f, 0), Quaternion.identity);
@@ -295,27 +344,28 @@ public class Main : MonoBehaviourPunCallbacks
     }
     IEnumerator GenerateBomb()
     {
-        while (true)
+        while (IsGameStart)
         {
             float delay = UnityEngine.Random.Range(2f, 4f);
             yield return new WaitForSeconds(delay);
             float xpos = UnityEngine.Random.Range(-1.9f, 1.9f);
             GameObject Bomb = PhotonNetwork.Instantiate("Bomb", new Vector3(xpos, 5.5f, 0), Quaternion.identity);
 
-
         }
     }
 
     public int[] PlayerScore = new int[4];
-    public int P1Score;
-    public int P2Score;
-    public int P3Score;
-    public int P4Score;
+
 
     [PunRPC]
     public void GetScore(int[] PlayerAndScore)
     {
         PlayerScore[PlayerAndScore[0]] += PlayerAndScore[1];
+        if (IsSuddenDeath)
+        {
+            IsSuddenDeath = false;
+            IsGameEnd = true;
+        }
     }
 
 

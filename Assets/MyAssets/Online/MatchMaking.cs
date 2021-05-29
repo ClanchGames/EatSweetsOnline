@@ -92,7 +92,7 @@ public class MatchMaking : MonoBehaviourPunCallbacks
     }
     public override void OnLeftRoom()
     {
-        // Debug.Log("I left");
+        Debug.Log("I left");
     }
     public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
     {

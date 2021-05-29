@@ -39,6 +39,8 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
         //”š’e‚É‚Ô‚Â‚©‚Á‚½Œã‚Í“®‚¯‚È‚¢
         if (isHit) return;
+        //ƒQ[ƒ€‚ªI‚í‚Á‚½‚ç“®‚¯‚È‚¢
+        if (!Main.main.IsGameStart) return;
 
         mousePosition = Input.mousePosition;
         mousePosition.z = 10;
