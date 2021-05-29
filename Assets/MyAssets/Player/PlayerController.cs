@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
+using DG.Tweening;
+
 
 // MonoBehaviourPunCallbacksを継承して、photonViewプロパティを使えるようにする
 public class PlayerController : MonoBehaviourPunCallbacks
@@ -19,6 +21,8 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
     GameObject Arrow;
 
+
+
     private void Start()
     {
         rigid2d = GetComponent<Rigidbody2D>();
@@ -32,6 +36,9 @@ public class PlayerController : MonoBehaviourPunCallbacks
         if (!photonView.IsMine) return;
         //ゲームが始まる前は動かさない
         if (!Main.main.IsGameStart) return;
+
+        //爆弾にぶつかった後は動けない
+        if (isHit) return;
 
         mousePosition = Input.mousePosition;
         mousePosition.z = 10;
@@ -57,7 +64,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
             //矢印を傾ける
             Vector2 direction = -1 * (duringDragPos - startDragPos).normalized;
             Arrow.transform.rotation = Quaternion.FromToRotation(Vector3.right, direction);
-            Debug.Log(Arrow.transform.rotation);
+            // Debug.Log(Arrow.transform.rotation);
         }
         //離す
         else if (Input.GetMouseButtonUp(0))
@@ -92,12 +99,30 @@ public class PlayerController : MonoBehaviourPunCallbacks
         {
             Vector3 fallPower = new Vector3(0, -20, 0);
             rigid2d.AddForce(fallPower, ForceMode2D.Force);
-            Debug.Log("fall");
         }
 
         height = transform.position.y;
-
     }
 
+    public void GetSweets()
+    {
+        Debug.Log("getsweets");
+    }
 
+    public bool isHit = false;
+    public void HitBomb()
+    {
+        Debug.Log("hitbomb");
+        float interval = 0.1f;
+        float time = 2f;
+        isHit = true;
+        rigid2d.velocity = Vector3.zero;
+        Blinker blinker = GetComponent<Blinker>();
+        blinker.InitBlink(interval, time);
+        Invoke(nameof(ReturnGame), time);
+    }
+    void ReturnGame()
+    {
+        isHit = false;
+    }
 }

@@ -155,10 +155,6 @@ public class Main : MonoBehaviourPunCallbacks
             trueObj.SetActive(true);
     }
 
-    public void StartGenerateStage()
-    {
-        photonView.RPC(nameof(GenerateStage), RpcTarget.AllBuffered);
-    }
 
 
 
@@ -173,61 +169,23 @@ public class Main : MonoBehaviourPunCallbacks
         SE.se.CountDown();
         yield return new WaitForSeconds(3f);
         IsGameStart = true;
+        if (isMaster)
+        {
+            StartCoroutine(GenerateSweets());
+            StartCoroutine(GenerateBomb());
+        }
+
     }
 
-    /* private void ChangeTurn()
-     {
-         //ターンプレイヤーのみが通れる。
-         if (TurnPlayer != PlayerNum.None && TurnPlayer != playerNum)
-         {
-             return;
-         }
-         //切り替え
-         switch (TurnPlayer)
-         {
-             case PlayerNum.None:
-                 TurnPlayer = PlayerNum.Player1;
-                 break;
-             case PlayerNum.Player1:
-                 TurnPlayer = PlayerNum.Player2;
-                 break;
-             case PlayerNum.Player2:
-                 TurnPlayer = PlayerNum.Player1;
-                 break;
-         }
-
-
-         photonView.RPC(nameof(SetTurnPlayer), RpcTarget.AllBuffered, (int)TurnPlayer);
-     }*/
-    /*[PunRPC]
-    void SetTurnPlayer(int num)
+    //制限時間のカウントダウン
+    IEnumerator TimeLimitCount()
     {
-        TurnPlayer = (PlayerNum)Enum.ToObject(typeof(PlayerNum), num);
-        // Debug.Log("set turn player");
-        //ターンプレイヤーになった人はプレイヤー生成
-        if (TurnPlayer == playerNum)
+        while (true)
         {
-            // Debug.Log("you are turnplayer");
-            GeneratePlayer();
-            countDown = null;
-            countDown = CountDown();
-            StartCoroutine(countDown);
+
         }
     }
 
-    public IEnumerator CountDown()
-    {
-        timeLimit = 20;
-        while (timeLimit > 0)
-        {
-            yield return new WaitForSeconds(1f);
-            timeLimit--;
-            //  Debug.Log("limit" + timeLimit);
-        }
-        if (IsGameEnd) yield break;
-        ChangeTurn();
-    }
-    */
 
     public void AddPlayerToList(GameObject player, PlayerNum num)
     {
@@ -245,98 +203,8 @@ public class Main : MonoBehaviourPunCallbacks
 
     }
 
-    /*
-    public void AfterShot()
-    {
-        StopCoroutine(countDown);
-        photonView.RPC(nameof(StartCheckPlayerMotion), RpcTarget.AllBuffered);
-    }
 
-    [PunRPC]
-    void StartCheckPlayerMotion()
-    {
-        StartCoroutine(CheckPlayerMotion());
-    }
-    IEnumerator CheckPlayerMotion()
-    {
-        int a = 0;
-        while (a < 1000000)
-        {
-            yield return new WaitForSeconds(0.3f);
-            if (!IsGameStart) yield break;
-            a++;
-            if (playerNum == PlayerNum.Player1)
-            {
-                IsP1Stop = true;
-                if (P1Objects.Count > 0)
-                {
-                    foreach (var p1 in P1Objects)
-                    {
-                        if (p1 == null)
-                        {
-                            continue;
-                        }
-                        //ここよくない
-                        CharacterController controller = p1.GetComponent<CharacterController>();
-                        if (!controller.IsStop)
-                        {
-                            IsP1Stop = false;
-                        }
-                    }
-                }
-                if (IsP1Stop)
-                {
-                    photonView.RPC(nameof(ConfirmStop), RpcTarget.AllBuffered, (int)PlayerNum.Player1);
-                }
-            }
 
-            if (playerNum == PlayerNum.Player2)
-            {
-                IsP2Stop = true;
-                if (P2Objects.Count > 0)
-                {
-                    foreach (var p2 in P2Objects)
-                    {
-                        if (p2 == null)
-                        {
-                            continue;
-                        }
-
-                        CharacterController controller = p2.GetComponent<CharacterController>();
-                        if (!controller.IsStop)
-                        {
-                            IsP2Stop = false;
-                        }
-                    }
-                }
-                if (IsP2Stop)
-                {
-                    photonView.RPC(nameof(ConfirmStop), RpcTarget.AllBuffered, (int)PlayerNum.Player2);
-                }
-            }
-
-            //全員が止まってたらOK
-            if (IsP1Stop && IsP2Stop)
-            {
-                Debug.Log("all stop");
-                if (TurnPlayer == playerNum)
-                {
-                    ChangeTurn();
-                }
-                yield break;
-            }
-        }
-    }
-    [PunRPC]
-    void ConfirmStop(int num)
-    {
-        if (num == (int)PlayerNum.Player1)
-            IsP1Stop = true;
-        else if (num == (int)PlayerNum.Player2)
-            IsP2Stop = true;
-
-    }
-    */
 
     //playerを生成
     public void GeneratePlayer()
@@ -430,162 +298,42 @@ public class Main : MonoBehaviourPunCallbacks
     }
     void ResetGame()
     {
-        /*  GameObject[] floorObjects = MyMethod.FindObject("FloorArea").GetComponentsInChildren<Transform>().Select(t => t.gameObject).ToArray();
-          foreach (var floorObject in floorObjects)
-          {
-              if (floorObject.name != "FloorArea")
-                  Destroy(floorObject);
-          }*/
         InitGame();
     }
-    public void DestroyAll()
-    {
 
-        /* if (P1Objects.Count > 0)
-         {
-             foreach (var player in P1Objects)
-             {
-                 Destroy(player);
-             }
-         }
-         if (P2Objects.Count > 0)
-         {
-             foreach (var player in P2Objects)
-             {
-                 Destroy(player);
-             }
-         }
-         P1Objects = new List<GameObject>();
-         P2Objects = new List<GameObject>();*/
+
+    public GameObject SweetsPrefab;
+    public GameObject BombPrefab;
+    //x:-1.9~1.9 y:5.5
+
+
+
+
+    IEnumerator GenerateSweets()
+    {
+        while (true)
+        {
+            float xpos = UnityEngine.Random.Range(-1.9f, 1.9f);
+            GameObject Sweets = PhotonNetwork.Instantiate("Sweets", new Vector3(xpos, 5.5f, 0), Quaternion.identity);
+            float delay = UnityEngine.Random.Range(1f, 2f);
+            yield return new WaitForSeconds(delay);
+        }
     }
-
-    [SerializeField]
-    GameObject Floor1Prefab;
-    private Vector3 StartPos = new Vector3(-7, -13, 0);
-    private Vector3 EndPos = new Vector3(7, 13, 0);
-
-    enum TileType
+    IEnumerator GenerateBomb()
     {
-        Empty,
-        Floor,
-        Wall
-    }
-
-    int width;
-    int height;
-    int mapSize;
-    int holeNum = 10;
-
-
-    //Masterがステージを生成
-    [PunRPC]
-    public void GenerateStage()
-    {
-        width = (int)(EndPos.x - StartPos.x) + 1;
-        height = (int)(EndPos.y - StartPos.y) + 1;
-        mapSize = width * height;
-        if (!isMaster) return;
-
-        //ここに追加された座標からランダムに穴をあける座標を選ぶ
-        var FloorList = new List<(int i, int j)>();
-
-        int[,] MapData = new int[height, width];
-        int tileNum = 0;
-
-        for (int i = 0; i < height; i++)
+        while (true)
         {
-            for (int j = 0; j < width; j++)
-            {
-                Vector3 position = new Vector3(StartPos.x + j, StartPos.y + i, StartPos.z);
+            float delay = UnityEngine.Random.Range(2f, 4f);
+            yield return new WaitForSeconds(delay);
+            float xpos = UnityEngine.Random.Range(-1.9f, 1.9f);
+            GameObject Bomb = PhotonNetwork.Instantiate("Bomb", new Vector3(xpos, 5.5f, 0), Quaternion.identity);
 
-                //とりあえず全座標をMapDataに入れる
-                MapData[i, j] = (int)TileType.Floor;
 
-                bool IsSafe = true;
-
-                //スタート地点の周りは安全にする
-                foreach (var pos in SafeZone)
-                {
-
-                    //スタート地点と離れているか確認
-                    if ((pos - position).magnitude < 5)
-                    {
-                        //一か所でもスタート地点と近かったらfalseして抜け出す
-                        IsSafe = false;
-                        break;
-                    }
-                }
-
-                if (!IsSafe)
-                {
-                    //SafeZoneじゃないなら追加する
-                    FloorList.Add((i, j));
-                }
-
-                tileNum++;
-            }
         }
-
-
-        //ランダムに穴をあける
-        for (int n = 0; n < holeNum; n++)
-        {
-            int random = UnityEngine.Random.Range(0, FloorList.Count);
-            MapData[FloorList[random].i, FloorList[random].j] = (int)TileType.Empty;
-
-
-            FloorList.RemoveAt(random);
-        }
-
-
-        //MapDataに入っている情報通りに生成
-        for (int i = 0; i < height; i++)
-        {
-            for (int j = 0; j < width; j++)
-            {
-                Vector3 position = new Vector3(StartPos.x + j, StartPos.y + i, StartPos.z);
-
-                if (MapData[i, j] == (int)TileType.Floor)
-                {
-                    GameObject floor = Instantiate(Floor1Prefab, position, Quaternion.identity);
-                    GameObject floorArea = MyMethod.FindObject("FloorArea");
-                    floor.transform.SetParent(floorArea.transform, true);
-                }
-
-            }
-        }
-
-        var MapData1D = MyMethod.ToOneDimensional(MapData);
-
-        //Master以外がステージデータを受け取り生成
-        photonView.RPC(nameof(ReceiveStageData), RpcTarget.OthersBuffered, MapData1D);
     }
 
 
-    //Master以外がステージデータを受け取り生成
-    [PunRPC]
-    public void ReceiveStageData(int[] mapData1D)
-    {
-        var mapData2D = MyMethod.ToTowDimensional(mapData1D, width, height);
-        for (int i = 0; i < height; i++)
-        {
-            for (int j = 0; j < width; j++)
-            {
-                Vector3 position = new Vector3(StartPos.x + j, StartPos.y + i, 0);
-                if (mapData2D[i, j] == (int)TileType.Floor)
-                {
-                    GameObject floor = Instantiate(Floor1Prefab, position, Quaternion.identity);
-                    GameObject floorArea = MyMethod.FindObject("FloorArea");
-                    floor.transform.SetParent(floorArea.transform, true);
-                }
-            }
-        }
 
-        // photonView.RPC(nameof(SetTurnPlayer), RpcTarget.AllBuffered, (int)PlayerNum.Player1);
-
-        //終わったらゲーム開始
-        photonView.RPC(nameof(GameStart), RpcTarget.AllBuffered);
-    }
 
 
 
