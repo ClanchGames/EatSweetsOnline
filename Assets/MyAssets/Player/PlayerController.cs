@@ -12,8 +12,8 @@ public class PlayerController : MonoBehaviourPunCallbacks
     Vector2 startDragPos;
 
     Rigidbody2D rigid2d;
-    float power = 3f;
-    float maxDistance = 2.5f;
+    float power = 4f;
+    float maxDistance = 2f;
     float speed;
     float chargeTime = 1;
 
@@ -46,18 +46,18 @@ public class PlayerController : MonoBehaviourPunCallbacks
         else if (Input.GetMouseButton(0))
         {
             Vector2 duringDragPos = mouseWorldPosition;
-            Vector2 direction = -1 * (duringDragPos - startDragPos).normalized;
             float distance = (duringDragPos - startDragPos).magnitude;
             if (distance >= maxDistance) distance = maxDistance;
             chargeTime += Time.deltaTime * 0.5f;
-            Debug.Log("charge:" + chargeTime);
+            //  Debug.Log("charge:" + chargeTime);
 
             //–îˆó‚ð‘å‚«‚­‚·‚é
-            float arrowScale = distance * 2;
+            float arrowScale = distance;
             Arrow.transform.localScale = new Vector3(arrowScale, arrowScale, 0);
             //–îˆó‚ðŒX‚¯‚é
-
-
+            Vector2 direction = -1 * (duringDragPos - startDragPos).normalized;
+            Arrow.transform.rotation = Quaternion.FromToRotation(Vector3.right, direction);
+            Debug.Log(Arrow.transform.rotation);
         }
         //—£‚·
         else if (Input.GetMouseButtonUp(0))
@@ -71,15 +71,31 @@ public class PlayerController : MonoBehaviourPunCallbacks
             speed = distance * power * chargeTime;
             if (speed >= 13) speed = 13;
             rigid2d.AddForce(startDirection * speed, ForceMode2D.Impulse);
-            Debug.Log("dis" + distance);
-            Debug.Log("speed" + speed);
-            Debug.Log("speedresult" + startDirection * speed);
+            //  Debug.Log("dis" + distance);
+            // Debug.Log("speed" + speed);
+            // Debug.Log("speedresult" + startDirection * speed);
             chargeTime = 1;
 
             //–îˆó‚ð‰B‚·
             Arrow.transform.localScale = new Vector3(0, 0, 0);
 
         }
+
+    }
+
+    float height = 0;
+
+    private void FixedUpdate()
+    {
+        //—Ž‚¿‚é‚Æ‚«‚¾‚¯‰º‚É—Í‚ð‰Á‚¦‚é
+        if (height > transform.position.y)
+        {
+            Vector3 fallPower = new Vector3(0, -20, 0);
+            rigid2d.AddForce(fallPower, ForceMode2D.Force);
+            Debug.Log("fall");
+        }
+
+        height = transform.position.y;
 
     }
 
