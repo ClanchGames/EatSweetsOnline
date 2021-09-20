@@ -1332,7 +1332,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96b2a76d4136e2147b2c4ffeafd3fe6d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerNum: 0
 --- !u!65 &303938293
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1533,6 +1532,13 @@ MonoBehaviour:
   GameOverSE: {fileID: 8300000, guid: 75099d789f3a757459399cc78690575b, type: 3}
   GameClearSE: {fileID: 8300000, guid: db4ec357d3cb4ab448116b4881a843d4, type: 3}
   PopSE: {fileID: 8300000, guid: e2714ae7640ef4b43b3a34d0d4ddd93b, type: 3}
+  CountDownSE: {fileID: 0}
+  GetSweetsSE: {fileID: 0}
+  HitBombSE: {fileID: 0}
+  WinSE: {fileID: 0}
+  LoseSE: {fileID: 0}
+  HomeBGM: {fileID: 0}
+  BattleBGM: {fileID: 0}
   delay: 0.06
 --- !u!4 &308123749
 Transform:
@@ -1734,14 +1740,19 @@ MonoBehaviour:
     playerdata:
       level: 0
     isFirst: 1
-  right: 0
-  left: 0
+    volume: 0.5
   HomeScreen: {fileID: 119618421}
   ConnectionScreen: {fileID: 1903803594}
   BattleScreen: {fileID: 1278586377}
   ResultScreen: {fileID: 875330492}
+  PasswordScreen: {fileID: 0}
+  ConfigScreen: {fileID: 0}
   P1Objects: []
   P2Objects: []
+  SweetsPrefab: {fileID: 0}
+  BombPrefab: {fileID: 0}
+  SweetsList: []
+  PlayerScore: 00000000000000000000000000000000
 --- !u!4 &499476273
 Transform:
   m_ObjectHideFlags: 0
@@ -1768,6 +1779,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afb6ac8c1da8e964da8d1d94cbe0bb9a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  passwordLengthMax: 8
 --- !u!114 &499476275
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5725,32 +5737,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!1 &1282193070 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1848359929749251698, guid: 65a1a9ff58ddff043a7d93db60bd63ea, type: 3}
-  m_PrefabInstance: {fileID: 1848359930888294620}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &1282193071 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1848359929749251699, guid: 65a1a9ff58ddff043a7d93db60bd63ea, type: 3}
-  m_PrefabInstance: {fileID: 1848359930888294620}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1282193072
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1282193070}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SynchronizePosition: 1
-  m_SynchronizeRotation: 1
-  m_SynchronizeScale: 0
-  m_UseLocal: 1
 --- !u!1 &1288900662
 GameObject:
   m_ObjectHideFlags: 0
@@ -5780,7 +5766,7 @@ Transform:
   m_Children:
   - {fileID: 4000010628905305}
   - {fileID: 1080934898}
-  - {fileID: 1282193071}
+  - {fileID: 1848359930888294621}
   - {fileID: 1338742219}
   - {fileID: 480882235}
   m_Father: {fileID: 0}
@@ -8718,6 +8704,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1288900663}
     m_Modifications:
+    - target: {fileID: -1010577746209869693, guid: 65a1a9ff58ddff043a7d93db60bd63ea, type: 3}
+      propertyPath: sceneViewId
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1848359929749251698, guid: 65a1a9ff58ddff043a7d93db60bd63ea, type: 3}
       propertyPath: m_Name
       value: Player
@@ -8780,6 +8770,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 65a1a9ff58ddff043a7d93db60bd63ea, type: 3}
+--- !u!4 &1848359930888294621 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7925278414247349620, guid: 65a1a9ff58ddff043a7d93db60bd63ea, type: 3}
+  m_PrefabInstance: {fileID: 1848359930888294620}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &4779746681848137964
 PrefabInstance:
   m_ObjectHideFlags: 0

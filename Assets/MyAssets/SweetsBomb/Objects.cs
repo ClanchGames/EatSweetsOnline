@@ -9,12 +9,22 @@ public class Objects : MonoBehaviourPunCallbacks
 {
     int score = 1;
     string Tag;
-
+    Sprite sweetsSprite;
     // Start is called before the first frame update
     void Start()
     {
         Tag = gameObject.tag;
         transform.DOLocalMoveY(-10, 10);
+        if (Tag == "Sweets")
+        {
+            SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
+            if (Main.main.isMaster)
+            {
+                Main.main.ChangeSprite();
+            }
+            spriteRenderer.sprite = Main.main.SweetsSprite;
+        }
+
     }
 
     // Update is called once per frame
@@ -26,8 +36,19 @@ public class Objects : MonoBehaviourPunCallbacks
         }
     }
 
+
+    void SetSprite()
+    {
+        if (sweetsSprite != null)
+        {
+            SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
+            spriteRenderer.sprite = sweetsSprite;
+        }
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        //プレイヤーに当たった時
         if (collision.gameObject.tag == "Player")
         {
             PlayerController PC = collision.gameObject.GetComponent<PlayerController>();
@@ -46,6 +67,8 @@ public class Objects : MonoBehaviourPunCallbacks
             }
             Destroy(gameObject);
         }
+
+        //地面に当たったとき
         if (collision.gameObject.tag == "Ground")
         {
             Destroy(gameObject);
@@ -54,15 +77,22 @@ public class Objects : MonoBehaviourPunCallbacks
     }
 
 
+
+
+
     private void OnTriggerStay2D(Collider2D collision)
     {
 
-        if (collision.gameObject.tag == "Sweets")
+
+        //オブジェクト同士が重なってる時　ボム優先する
+        if (Tag == "Bomb")
         {
-            Debug.Log("in");
-            Destroy(collision.gameObject);
+            if (collision.gameObject.tag == "Sweets")
+            {
+                Destroy(collision.gameObject);
+            }
         }
+
+
     }
-
-
 }

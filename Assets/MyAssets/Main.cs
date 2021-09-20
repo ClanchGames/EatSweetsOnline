@@ -53,6 +53,9 @@ public class Main : MonoBehaviourPunCallbacks
     public GameObject ConnectionScreen;
     public GameObject BattleScreen;
     public GameObject ResultScreen;
+    public GameObject PasswordScreen;
+
+    public GameObject ConfigScreen;
 
     public List<GameObject> P1Objects = new List<GameObject>();
     public List<GameObject> P2Objects = new List<GameObject>();
@@ -79,11 +82,11 @@ public class Main : MonoBehaviourPunCallbacks
         {
             Destroy(gameObject);
         }
+
         debug = GetComponent<DebugSystem>();
         //まだセーブファイルが作成されてないとき初期化
         if (SaveSystem.Load() == null)
         {
-            Debug.Log("first");
             InitializeClass();
         }
         else //ファイルが作られているならLoad
@@ -93,27 +96,32 @@ public class Main : MonoBehaviourPunCallbacks
     }
     void Start()
     {
+        SE.se.PlayBGM(BGM.Home, true);
+        HideBanner();
+        HideLargeBanner();
 
+        StartCoroutine(MainSave());
     }
 
+    float startTime;
 
+    bool isOpponentLeft = false;
     void Update()
     {
-        // Debug.Log("turnplayer  " + TurnPlayer);
+
 
         if (IsGameStart)
         {
             if (IsGameEnd)
             {
-                if (CheckScore())
-                {
-                    GameSet();
-                }
+                if (!isOpponentLeft)
+                    Winner = CheckWinner();
                 else
                 {
-                    StartSuddenDeath();
+                    isOpponentLeft = false;
+                    Winner = playerNum;
                 }
-                Debug.Log(CheckScore());
+                GameSet();
 
             }
         }
@@ -121,10 +129,8 @@ public class Main : MonoBehaviourPunCallbacks
     }
     IEnumerator MainSave()
     {
-        int x = 0;
-        while (x < 10000)
+        while (true)
         {
-            x++;
             SaveSystem.Save(saveData);
             yield return new WaitForSeconds(1f);
         }
@@ -132,32 +138,78 @@ public class Main : MonoBehaviourPunCallbacks
     /// <summary>
     /// スタートボタンを押す処理
     /// </summary>
-    public void Play()
+    /// 
+    bool isPrivate = false;
+    public void Play(bool isprivate)
     {
+        //広告非表示
+        HideBanner();
+        HideLargeBanner();
+
+        isPrivate = isprivate;
+        MatchMaking.matchMake.isPrivate = isPrivate;
+        if (isPrivate)
+        {
+            if (MatchMaking.matchMake.password.Length != MatchMaking.matchMake.passwordLengthMax)
+            {
+                isPrivate = false;
+                return;
+            }
+        }
         MaxPlayer = 2;
         IsPressPlay = true;
         MatchMaking.matchMake.StartMatchMaking("Game");
         ChangeActive(HomeScreen, ConnectionScreen);
+        ChangeActive(PasswordScreen, ConnectionScreen);
         InitGame();
+    }
+
+    public void Retry()
+    {
+        PhotonNetwork.LeaveRoom();
+        ChangeActive(ResultScreen, ConnectionScreen);
+        ChangeActive(BattleScreen, null);
+        Play(isPrivate);
     }
 
     public void ChangeActive(GameObject falseObj, GameObject trueObj)
     {
-        if (falseObj.activeSelf)
-            falseObj.SetActive(false);
-        if (!trueObj.activeSelf)
-            trueObj.SetActive(true);
+        if (falseObj != null)
+        {
+            if (falseObj.activeSelf)
+            {
+                falseObj.SetActive(false);
+            }
+        }
+        if (trueObj != null)
+        {
+            if (!trueObj.activeSelf)
+            {
+                trueObj.SetActive(true);
+            }
+        }
     }
 
-
+    public void OpenPasswordScreen()
+    {
+        ChangeActive(HomeScreen, PasswordScreen);
+    }
+    public void ClosePasswordScreen()
+    {
+        ChangeActive(PasswordScreen, HomeScreen);
+    }
 
 
     [PunRPC]
     public void GameStart()
     {
+        SE.se.PlayBGM(BGM.Home, false);
+        SE.se.PlayBGM(BGM.Battle, false);
         StartCoroutine(GameStartDelay());
         GeneratePlayer();
     }
+
+
     IEnumerator GameStartDelay()
     {
         SE.se.CountDown();
@@ -169,6 +221,7 @@ public class Main : MonoBehaviourPunCallbacks
             StartCoroutine(GenerateSweets());
             StartCoroutine(GenerateBomb());
         }
+        SE.se.PlayBGM(BGM.Battle, true);
 
     }
 
@@ -178,7 +231,7 @@ public class Main : MonoBehaviourPunCallbacks
         while (true)
         {
             timeLimit--;
-            if (timeLimit <= 0)
+            if (timeLimit <= 0 || isOpponentLeft)
             {
                 IsGameEnd = true;
                 yield break;
@@ -186,47 +239,24 @@ public class Main : MonoBehaviourPunCallbacks
             yield return new WaitForSeconds(1f);
         }
     }
-    bool CheckScore()
+
+
+    PlayerNum CheckWinner()
     {
-        int highestScore = 0;
-        //誰が一番得点が高いか調べる 部屋にいる人数分まで
-        for (int i = 0; i < PhotonNetwork.CurrentRoom.PlayerCount; i++)
+        PlayerNum winnerNum;
+        if (PlayerScore[0] > PlayerScore[1])
         {
-            //ハイスコア以上なら確認
-            if (highestScore <= PlayerScore[i])
-            {
-                //とりあえずハイスコア保存
-                highestScore = PlayerScore[i];
-
-                //上回っていれば、勝者は自分だけにする
-                if (highestScore < PlayerScore[i])
-                {
-                    WinnerList.Clear();
-                }
-                //同率一位なら何もしない
-                else if (highestScore == PlayerScore[i])
-                {
-
-                }
-                WinnerList.Add((PlayerNum)Enum.ToObject(typeof(PlayerNum), i));
-                if (highestScore == 0)
-                {
-                    WinnerList.Clear();
-                }
-            }
+            winnerNum = PlayerNum.Player1;
         }
-
-        Debug.Log("winner count" + WinnerList.Count);
-        if (WinnerList.Count == 1)
+        else if (PlayerScore[0] < PlayerScore[1])
         {
-            Winner = WinnerList[0];
-            return true;
+            winnerNum = PlayerNum.Player2;
         }
         else
         {
-            return false;
+            winnerNum = PlayerNum.All;
         }
-
+        return winnerNum;
     }
     void StartSuddenDeath()
     {
@@ -268,23 +298,48 @@ public class Main : MonoBehaviourPunCallbacks
         }
     }
 
+    public Sprite SweetsSprite { get; set; }
 
 
+    public void ChangeSprite()
+    {
+        //画像の中からランダムにスイーツを一つ選ぶ
+        int sweetsNum = UnityEngine.Random.Range(0, SweetsList.Length);
+        photonView.RPC(nameof(SetSprite), RpcTarget.AllBuffered, sweetsNum);
+    }
+    [PunRPC]
+    void SetSprite(int sweetsNum)
+    {
+        SweetsSprite = SweetsList[sweetsNum];
+    }
 
     public void GameSet()
     {
         IsGameStart = false;
         IsPressPlay = false;
         IsGameEnd = false;
-        ChangeActive(BattleScreen, ResultScreen);
+        ChangeActive(null, ResultScreen);
+        if (Winner == playerNum)
+        {
+            SE.se.Win();
+        }
+        else
+        {
+            SE.se.Lose();
+        }
 
-
+        //広告の表示
+        ShowBanner();
+        ShowLargeBanner();
 
     }
     public void Disconnect()
     {
-        //PhotonNetwork.Destroy(photonView);
-        PhotonNetwork.Disconnect();
+        if (PhotonNetwork.IsConnected)
+        {
+            PhotonNetwork.Disconnect();
+        }
+
     }
     public void DisconnectInGame()
     {
@@ -294,33 +349,34 @@ public class Main : MonoBehaviourPunCallbacks
     }
     public void OpponentLeft()
     {
-        IsGameEnd = true;
+        isOpponentLeft = true;
         Winner = playerNum;
     }
     public void ReturnHome()
     {
-        PhotonNetwork.LeaveRoom();
+        if (PhotonNetwork.InRoom)
+            PhotonNetwork.LeaveRoom();
         Disconnect();
         if (BattleScreen.activeSelf)
             ChangeActive(BattleScreen, HomeScreen);
-        else if (ResultScreen.activeSelf)
+        if (ResultScreen.activeSelf)
             ChangeActive(ResultScreen, HomeScreen);
+        if (ConnectionScreen.activeSelf)
+            ChangeActive(ConnectionScreen, HomeScreen);
 
+        SE.se.PlayBGM(BGM.Home, true);
+        SE.se.PlayBGM(BGM.Battle, false);
         InitGame();
     }
-    public void Retry()
-    {
-        PhotonNetwork.LeaveRoom();
-        ChangeActive(ResultScreen, ConnectionScreen);
-        Play();
-    }
+
 
     void InitGame()
     {
         WinnerList.Clear();
         Winner = PlayerNum.None;
         PlayerScore = new int[4];
-        timeLimit = 3;
+        timeLimit = 10;
+        // timeLimit = 60;
     }
 
 
@@ -330,7 +386,7 @@ public class Main : MonoBehaviourPunCallbacks
     //x:-1.9~1.9 y:5.5
 
 
-
+    public Sprite[] SweetsList;
 
     IEnumerator GenerateSweets()
     {
@@ -340,8 +396,10 @@ public class Main : MonoBehaviourPunCallbacks
             GameObject Sweets = PhotonNetwork.Instantiate("Sweets", new Vector3(xpos, 5.5f, 0), Quaternion.identity);
             float delay = UnityEngine.Random.Range(1f, 2f);
             yield return new WaitForSeconds(delay);
+
         }
     }
+
     IEnumerator GenerateBomb()
     {
         while (IsGameStart)
@@ -356,7 +414,10 @@ public class Main : MonoBehaviourPunCallbacks
 
     public int[] PlayerScore = new int[4];
 
-
+    /// <summary>
+    /// ([PlayerNum,Score])
+    /// </summary>
+    /// <param name="PlayerAndScore"></param>
     [PunRPC]
     public void GetScore(int[] PlayerAndScore)
     {
@@ -368,14 +429,27 @@ public class Main : MonoBehaviourPunCallbacks
         }
     }
 
+    public void OpenConfig()
+    {
+        ChangeActive(HomeScreen, ConfigScreen);
+    }
+
+    public void CloseConfig()
+    {
+        ChangeActive(ConfigScreen, HomeScreen);
+    }
+    public void OpenTwitter()
+    {
+        Application.OpenURL("https://twitter.com/intent/user?user_id=1298189028353650690");
+    }
 
 
 
 
 
+    //ここから共通機能
 
 
-    //ここから下テスト用
 
     public void Save()
     {
@@ -384,6 +458,7 @@ public class Main : MonoBehaviourPunCallbacks
     public void MainLoad()
     {
         saveData = SaveSystem.Load();
+        AudioListener.volume = saveData.volume;
         // Debug.Log(saveData.playerdata.level);
     }
     public void MainDelete()
@@ -395,8 +470,11 @@ public class Main : MonoBehaviourPunCallbacks
     void InitializeClass()
     {
         saveData = new SaveData();
-        SaveData.SD.playerdata = new PlayerData();
+        //SaveData.SD.playerdata = new PlayerData();
     }
+
+    //広告関係
+    //今回はBannerとLargeBannerだけ使う
 
     public void ShowNormalBanner()
     {
@@ -406,6 +484,11 @@ public class Main : MonoBehaviourPunCallbacks
     {
         adMob.ShowLargeBanner();
     }
+    public void ShowBanner()
+    {
+        adMob.ShowBanner();
+    }
+
 
     public void HideNormalBanner()
     {
@@ -415,17 +498,10 @@ public class Main : MonoBehaviourPunCallbacks
     {
         adMob.HideLargeBanner();
     }
-    public void Banner()
-    {
-        adMob.RequestBanner();
-    }
+
     public void HideBanner()
     {
         adMob.HideBanner();
-    }
-    public void ShowBanner()
-    {
-        adMob.ShowBanner();
     }
     public void Interstitial()
     {

@@ -21,12 +21,14 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
     GameObject Arrow;
 
+    bool isGround = true;
 
 
     private void Start()
     {
         rigid2d = GetComponent<Rigidbody2D>();
         Arrow = MyMethod.GetChildWithName(gameObject, "Arrow");
+        ShowMark();
     }
 
     private void Update()
@@ -35,12 +37,18 @@ public class PlayerController : MonoBehaviourPunCallbacks
         // 自身が生成したオブジェクトだけに移動処理を行う
         if (!photonView.IsMine) return;
         //ゲームが始まる前は動かさない
-        if (!Main.main.IsGameStart) return;
+        if (!Main.main.IsGameStart)
+        {
+            //矢印は消す
+            Arrow.transform.localScale = new Vector3(0, 0, 0);
+            return;
+        }
 
         //爆弾にぶつかった後は動けない
         if (isHit) return;
-        //ゲームが終わったら動けない
-        if (!Main.main.IsGameStart) return;
+
+        //飛んでる間は動けない
+        if (!isGround) return;
 
         mousePosition = Input.mousePosition;
         mousePosition.z = 10;
@@ -68,7 +76,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
             Arrow.transform.rotation = Quaternion.FromToRotation(Vector3.right, direction);
             // Debug.Log(Arrow.transform.rotation);
         }
-        //離す
+        //離す 
         else if (Input.GetMouseButtonUp(0))
         {
 
@@ -80,13 +88,11 @@ public class PlayerController : MonoBehaviourPunCallbacks
             speed = distance * power * chargeTime;
             if (speed >= 13) speed = 13;
             rigid2d.AddForce(startDirection * speed, ForceMode2D.Impulse);
-            //  Debug.Log("dis" + distance);
-            // Debug.Log("speed" + speed);
-            // Debug.Log("speedresult" + startDirection * speed);
             chargeTime = 1;
 
             //矢印を隠す
             Arrow.transform.localScale = new Vector3(0, 0, 0);
+
 
         }
 
@@ -108,11 +114,17 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
     public void GetSweets(int score)
     {
-        Debug.Log("getsweets");
         int[] PlayerAndScore = new int[2];
         PlayerAndScore[0] = (int)Main.main.playerNum;
         PlayerAndScore[1] = score;
+        SE.se.GetSweets();
         Main.main.photonView.RPC(nameof(Main.main.GetScore), RpcTarget.AllBuffered, PlayerAndScore);
+    }
+
+    [PunRPC]
+    public void ChangeSprite()
+    {
+
     }
 
     public bool isHit = false;
@@ -121,17 +133,66 @@ public class PlayerController : MonoBehaviourPunCallbacks
     public void HitBomb(int viewID)
     {
         if (photonView.ViewID != viewID) return;
-        Debug.Log("hitbomb");
         float interval = 0.1f;
-        float time = 2f;
+        float time = 1f;
         isHit = true;
         rigid2d.velocity = Vector3.zero;
         Blinker blinker = GetComponent<Blinker>();
         blinker.InitBlink(interval, time);
         Invoke(nameof(ReturnGame), time);
+        SE.se.HitBomb();
     }
     void ReturnGame()
     {
         isHit = false;
+    }
+
+    GameObject Mark;
+    //ゲーム開始時マークを表示
+    void ShowMark()
+    {
+        if (!photonView.IsMine)
+        {
+            Debug.Log("in");
+            return;
+        }
+        Mark = MyMethod.GetChildWithName(gameObject, "Mark");
+        Mark.SetActive(true);
+        Sequence seq = MyMethod.UpDown(Mark.transform);
+        StartCoroutine(CloseMark(seq));
+
+    }
+
+    IEnumerator CloseMark(Sequence seq)
+    {
+        yield return new WaitForSeconds(3f);
+        seq.Kill();
+        Mark.SetActive(false);
+    }
+
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        //着地したとき
+        if (collision.gameObject.tag == "Ground" || collision.gameObject.tag == "Player")
+        {
+            isGround = true;
+        }
+    }
+
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Ground" || collision.gameObject.tag == "Player")
+        {
+            isGround = true;
+        }
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Ground" || collision.gameObject.tag == "Player")
+        {
+            isGround = false;
+        }
     }
 }

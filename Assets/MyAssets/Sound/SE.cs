@@ -2,6 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum BGM
+{
+    Home,
+    Battle
+}
 public class SE : MonoBehaviour
 {
     static public SE se;
@@ -11,6 +16,16 @@ public class SE : MonoBehaviour
     public AudioClip GameClearSE;
     public AudioClip PopSE;
     public AudioClip CountDownSE;
+    public AudioClip GetSweetsSE;
+    public AudioClip HitBombSE;
+    public AudioClip WinSE;
+    public AudioClip LoseSE;
+
+
+
+
+    public AudioSource HomeBGM;
+    public AudioSource BattleBGM;
     AudioSource audioSource;
 
     [SerializeField]
@@ -66,8 +81,60 @@ public class SE : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// true=play,false=stop
+    /// </summary>
+    /// <param name="bgm"></param>
+    /// <param name="playORstop"></param>
+    public void PlayBGM(BGM bgm, bool playORstop)
+    {
+        if (bgm == BGM.Home)
+        {
+            if (playORstop)
+            {
+                HomeBGM.Play();
+            }
+            else
+            {
+                HomeBGM.Stop();
+            }
+        }
+
+        if (bgm == BGM.Battle)
+        {
+
+            if (playORstop)
+            {
+                BattleBGM.Play();
+            }
+            else
+            {
+                BattleBGM.Stop();
+            }
+        }
+    }
+
     public void CountDown()
     {
         PlaySE(CountDownSE);
+    }
+    public void GetSweets()
+    {
+        PlaySE(GetSweetsSE);
+    }
+
+    public void HitBomb()
+    {
+        PlaySE(HitBombSE);
+    }
+
+    public void Win()
+    {
+        PlaySE(WinSE);
+    }
+
+    public void Lose()
+    {
+        PlaySE(LoseSE);
     }
 }

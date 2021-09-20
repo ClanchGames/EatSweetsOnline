@@ -42,7 +42,20 @@ public static class MyMethod
     {
         image.DOFade(1, 0);
     }
+    public static Sequence UpDown(Transform transform)
+    {
+        Sequence seq;
+        seq = DOTween.Sequence();
+        seq.Append(transform.DOLocalMoveY(-1f, 0.5f).SetEase(Ease.Linear).SetRelative());
+        seq.Append(transform.DOLocalMoveY(1f, 0.5f).SetEase(Ease.Linear).SetRelative());
+        seq.SetLoops(-1);
+        return seq;
+    }
 
+    public static void KillSequence(Sequence seq)
+    {
+        seq.Kill();
+    }
     public static GameObject FindObject(string objname)
     {
         GameObject obj = GameObject.Find(objname);

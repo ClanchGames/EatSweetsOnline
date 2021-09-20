@@ -18,6 +18,8 @@ public class SaveData
     }
     public PlayerData playerdata;
     public bool isFirst = true;
+
+    public float volume = 0.5f;
 }
 
 

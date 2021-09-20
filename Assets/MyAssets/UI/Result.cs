@@ -19,6 +19,10 @@ public class Result : MonoBehaviour
         {
             result.text = "Win";
         }
+        else if (Main.main.Winner == PlayerNum.All)
+        {
+            result.text = "Draw";
+        }
         else
         {
             result.text = "Lose";

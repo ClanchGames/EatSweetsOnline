@@ -21,6 +21,7 @@ public class AdMob : MonoBehaviour
     private BannerView largeBanner;
     bool normalBannerIsDisplay = false;
     bool largeBannerIsDisplay = false;
+    bool BannerIsDisplay = false;
     bool normalBannerIsLoaded = false;
     bool largeBannerIsLoaded = false;
 
@@ -29,8 +30,7 @@ public class AdMob : MonoBehaviour
     private bool isRewarded = false;
 
     public Text logtext;
-    // Use this for initialization
-    void Start()
+    private void Awake()
     {
         if (adMob == null)
         {
@@ -47,6 +47,12 @@ public class AdMob : MonoBehaviour
 
         RequestNormalBanner();
         RequestLargeBanner();
+        RequestBanner();
+    }
+    // Use this for initialization
+    void Start()
+    {
+
 
 
     }
@@ -109,13 +115,26 @@ public class AdMob : MonoBehaviour
     }
     public void ShowLargeBanner()
     {
-        if (largeBannerIsDisplay) return;
+        Debug.Log("in");
+        if (largeBannerIsDisplay)
+        {
+            Debug.Log("isdisplaylarge");
+            return;
+        }
         Debug.Log("show large");
         largeBanner.Show();
         largeBannerIsDisplay = true;
 
     }
+    public void ShowBanner()
+    {
+        if (BannerIsDisplay) return;
+        Debug.Log("show banner");
+        bannerView.Show();
+        BannerIsDisplay = true;
 
+
+    }
     public void HideNormalBanner()
     {
         if (normalBanner != null)
@@ -133,25 +152,14 @@ public class AdMob : MonoBehaviour
             largeBannerIsDisplay = false;
         }
     }
-    public void ShowBanner()
-    {
-        /* if (bannerView != null)
-         {
-             return;
-         }
-         else
-         {
-             RequestBanner();
-         }*/
 
-
-    }
     public void HideBanner()
     {
-        /* if (bannerView == null) return;
-         bannerView.Hide();
-         bannerView.Destroy();
-         bannerView = null;*/
+        if (bannerView != null)
+        {
+            bannerView.Hide();
+            BannerIsDisplay = false;
+        }
     }
 
     public void HandleOnNormalBannerLoaded(object sender, EventArgs args)

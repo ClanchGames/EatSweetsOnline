@@ -9,6 +9,13 @@ public class MatchMaking : MonoBehaviourPunCallbacks
 {
     public static MatchMaking matchMake;
 
+    public bool isPrivate { get; set; }
+
+    public string password { get; set; } = "";
+    public int passwordLengthMax = 8;
+
+
+
 
     private void Awake()
     {
@@ -43,34 +50,48 @@ public class MatchMaking : MonoBehaviourPunCallbacks
 
         if (PhotonNetwork.CurrentRoom != null)
         {
-            // Debug.Log("まだroomある");
             PhotonNetwork.CurrentRoom.IsOpen = true;
         }
 
     }
+
     // マスターサーバーへの接続が成功した時に呼ばれるコールバック
     public override void OnConnectedToMaster()
     {
-
-        // ランダムなルームに参加する
-        PhotonNetwork.JoinRandomRoom();
-        //Debug.Log("connect to master");
+        if (!isPrivate)
+        {
+            // ランダムなルームに参加する
+            PhotonNetwork.JoinRandomRoom();
+        }
+        else
+        {
+            Debug.Log("onconnectedtomaster");
+            //プライべート対戦ならパスワード付きの部屋に参加
+            PhotonNetwork.JoinRoom(password);
+        }
     }
     // ランダムで参加できるルームが存在しないなら、新規でルームを作成する
     public override void OnJoinRandomFailed(short returnCode, string message)
     {
         var roomOptions = new RoomOptions();
         roomOptions.MaxPlayers = Main.main.MaxPlayer;
-        roomOptions.CleanupCacheOnLeave = false;
         PhotonNetwork.CreateRoom(null, roomOptions);
+        Debug.Log("onjoinroomrandomfailed");
+    }
 
+    public override void OnJoinRoomFailed(short returnCode, string message)
+    {
+        var roomOptions = new RoomOptions();
+        roomOptions.MaxPlayers = Main.main.MaxPlayer;
+        roomOptions.IsVisible = false;
+        PhotonNetwork.CreateRoom(password, roomOptions);
+        Debug.Log("onjoinroomfailed");
     }
 
     // ゲームサーバーへの接続が成功した時に呼ばれるコールバック
     public override void OnJoinedRoom()
     {
         Main.main.playerNum = (PlayerNum)Enum.ToObject(typeof(PlayerNum), PhotonNetwork.CurrentRoom.PlayerCount - 1);
-        Debug.Log(Main.main.playerNum);
 
         if (PhotonNetwork.IsMasterClient)
         {
@@ -103,21 +124,21 @@ public class MatchMaking : MonoBehaviourPunCallbacks
         //接続した後
         if (Main.main.IsPressPlay)
         {
-            // Debug.Log("left opponent in game");
             Main.main.OpponentLeft();
+            Debug.Log("opponent left");
         }
         //バトル終わった後
         else
         {
-            // Debug.Log("left opponent afte game");
-            // Main.main.Disconnect();
+            Debug.Log("left opponent after game");
+            Main.main.Disconnect();
         }
         PhotonNetwork.CurrentRoom.IsOpen = false;
     }
 
     public override void OnDisconnected(DisconnectCause cause)
     {
-
+        Debug.Log("ondisconnected");
     }
 
 }
