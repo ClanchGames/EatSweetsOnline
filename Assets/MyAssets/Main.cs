@@ -40,6 +40,8 @@ public class Main : MonoBehaviourPunCallbacks
 
 
     public PlayerNum TurnPlayer { get; set; }
+
+    //1P 2PÇäÑÇËêUÇÈ
     public PlayerNum playerNum { get; set; }
 
 
@@ -142,6 +144,7 @@ public class Main : MonoBehaviourPunCallbacks
     bool isPrivate = false;
     public void Play(bool isprivate)
     {
+        Disconnect();
         //çLçêîÒï\é¶
         HideBanner();
         HideLargeBanner();
@@ -158,15 +161,16 @@ public class Main : MonoBehaviourPunCallbacks
         }
         MaxPlayer = 2;
         IsPressPlay = true;
-        MatchMaking.matchMake.StartMatchMaking("Game");
+        InitGame();
         ChangeActive(HomeScreen, ConnectionScreen);
         ChangeActive(PasswordScreen, ConnectionScreen);
-        InitGame();
+        MatchMaking.matchMake.StartMatchMaking();
     }
 
     public void Retry()
     {
         PhotonNetwork.LeaveRoom();
+        Disconnect();
         ChangeActive(ResultScreen, ConnectionScreen);
         ChangeActive(BattleScreen, null);
         Play(isPrivate);
@@ -356,6 +360,7 @@ public class Main : MonoBehaviourPunCallbacks
     {
         if (PhotonNetwork.InRoom)
             PhotonNetwork.LeaveRoom();
+
         Disconnect();
         if (BattleScreen.activeSelf)
             ChangeActive(BattleScreen, HomeScreen);
@@ -375,8 +380,7 @@ public class Main : MonoBehaviourPunCallbacks
         WinnerList.Clear();
         Winner = PlayerNum.None;
         PlayerScore = new int[4];
-        timeLimit = 10;
-        // timeLimit = 60;
+        timeLimit = 30;
     }
 
 

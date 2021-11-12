@@ -41,12 +41,10 @@ public class MatchMaking : MonoBehaviourPunCallbacks
 
     }
 
-    public void StartMatchMaking(string name)
+    public void StartMatchMaking()
     {
-        PhotonNetwork.NickName = name;
         // PhotonServerSettingsの設定内容を使ってマスターサーバーへ接続する
         PhotonNetwork.ConnectUsingSettings();
-
 
         if (PhotonNetwork.CurrentRoom != null)
         {
@@ -65,7 +63,6 @@ public class MatchMaking : MonoBehaviourPunCallbacks
         }
         else
         {
-            Debug.Log("onconnectedtomaster");
             //プライべート対戦ならパスワード付きの部屋に参加
             PhotonNetwork.JoinRoom(password);
         }
@@ -76,7 +73,6 @@ public class MatchMaking : MonoBehaviourPunCallbacks
         var roomOptions = new RoomOptions();
         roomOptions.MaxPlayers = Main.main.MaxPlayer;
         PhotonNetwork.CreateRoom(null, roomOptions);
-        Debug.Log("onjoinroomrandomfailed");
     }
 
     public override void OnJoinRoomFailed(short returnCode, string message)
@@ -85,7 +81,6 @@ public class MatchMaking : MonoBehaviourPunCallbacks
         roomOptions.MaxPlayers = Main.main.MaxPlayer;
         roomOptions.IsVisible = false;
         PhotonNetwork.CreateRoom(password, roomOptions);
-        Debug.Log("onjoinroomfailed");
     }
 
     // ゲームサーバーへの接続が成功した時に呼ばれるコールバック
@@ -121,6 +116,7 @@ public class MatchMaking : MonoBehaviourPunCallbacks
     }
     public override void OnPlayerLeftRoom(Photon.Realtime.Player otherPlayer)
     {
+        PhotonNetwork.CurrentRoom.IsOpen = false;
         //接続した後
         if (Main.main.IsPressPlay)
         {
@@ -132,8 +128,8 @@ public class MatchMaking : MonoBehaviourPunCallbacks
         {
             Debug.Log("left opponent after game");
             Main.main.Disconnect();
+
         }
-        PhotonNetwork.CurrentRoom.IsOpen = false;
     }
 
     public override void OnDisconnected(DisconnectCause cause)

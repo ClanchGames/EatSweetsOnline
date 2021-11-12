@@ -45,9 +45,9 @@ public class AdMob : MonoBehaviour
         MobileAds.Initialize(initStatus => { });
 
 
-        RequestNormalBanner();
+        /*RequestNormalBanner();
         RequestLargeBanner();
-        RequestBanner();
+        RequestBanner();*/
     }
     // Use this for initialization
     void Start()

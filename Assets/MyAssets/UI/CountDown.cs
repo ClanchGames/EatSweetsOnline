@@ -14,6 +14,7 @@ public class CountDown : MonoBehaviour
     }
     private void OnEnable()
     {
+        text = GetComponent<TextMeshProUGUI>();
         StartCoroutine(StartCountDown());
     }
     // Update is called once per frame
