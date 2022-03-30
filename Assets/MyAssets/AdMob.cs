@@ -28,6 +28,15 @@ public class AdMob : MonoBehaviour
     private InterstitialAd interstitial;
     private RewardedAd rewardedAd;
     private bool isRewarded = false;
+<<<<<<< HEAD:Assets/MyAssets/AdMob.cs
+=======
+
+    string testdeviceID = "353001080687321";
+    // Use this for initialization
+    void Start()
+    {
+        adMob = this;
+>>>>>>> 8c70122d8ef024d404e94d07e0c454d9f5046d94:Assets/MyAssets/Ads/AdMob.cs
 
     public Text logtext;
     private void Awake()
@@ -44,6 +53,7 @@ public class AdMob : MonoBehaviour
         // Initialize the Google Mobile Ads SDK.
         MobileAds.Initialize(initStatus => { });
 
+<<<<<<< HEAD:Assets/MyAssets/AdMob.cs
 
         /*RequestNormalBanner();
         RequestLargeBanner();
@@ -54,6 +64,12 @@ public class AdMob : MonoBehaviour
     {
 
 
+=======
+        RequestBanner();
+        // HideBanner();
+        RequestReward();
+        RequestInterstitial();
+>>>>>>> 8c70122d8ef024d404e94d07e0c454d9f5046d94:Assets/MyAssets/Ads/AdMob.cs
 
     }
     private void Update()
@@ -97,29 +113,52 @@ public class AdMob : MonoBehaviour
     {
         if (bannerView != null)
         {
-            return;
+            bannerView.Destroy();
         }
-        AdSize adaptiveSize =
-              AdSize.GetCurrentOrientationAnchoredAdaptiveBannerAdSizeWithWidth(AdSize.FullWidth);
+
+        AdSize adaptiveSize = AdSize.GetCurrentOrientationAnchoredAdaptiveBannerAdSizeWithWidth(AdSize.FullWidth);
         bannerView = new BannerView(bannerId, adaptiveSize, AdPosition.Bottom);
 
-        AdRequest request = new AdRequest.Builder().Build();
+        bannerView.OnAdFailedToLoad += (object sender, AdFailedToLoadEventArgs args) =>
+        {
+            bannerView.Destroy();
+        };
+
+        AdRequest request = new AdRequest.Builder().AddTestDevice(testdeviceID).Build();
         bannerView.LoadAd(request);
+
+        Debug.Log("request banner");
+
     }
     public void ShowNormalBanner()
     {
+<<<<<<< HEAD:Assets/MyAssets/AdMob.cs
         if (normalBannerIsDisplay) return;
         Debug.Log("show normal");
         normalBanner.Show();
         normalBannerIsDisplay = true;
+=======
+        Debug.Log("hidebanner");
+        bannerView.Hide();
+        bannerView.Destroy();
+        bannerView = null;
+>>>>>>> 8c70122d8ef024d404e94d07e0c454d9f5046d94:Assets/MyAssets/Ads/AdMob.cs
     }
     public void ShowLargeBanner()
     {
+<<<<<<< HEAD:Assets/MyAssets/AdMob.cs
         Debug.Log("in");
         if (largeBannerIsDisplay)
         {
             Debug.Log("isdisplaylarge");
             return;
+=======
+        Debug.Log("showbanner");
+        if (bannerView == null)
+        {
+            Debug.Log("bannerview null request");
+            RequestBanner();
+>>>>>>> 8c70122d8ef024d404e94d07e0c454d9f5046d94:Assets/MyAssets/Ads/AdMob.cs
         }
         Debug.Log("show large");
         largeBanner.Show();
@@ -139,8 +178,13 @@ public class AdMob : MonoBehaviour
     {
         if (normalBanner != null)
         {
+<<<<<<< HEAD:Assets/MyAssets/AdMob.cs
             normalBanner.Hide();
             normalBannerIsDisplay = false;
+=======
+            Debug.Log("bannerview not null show");
+            bannerView.Show();
+>>>>>>> 8c70122d8ef024d404e94d07e0c454d9f5046d94:Assets/MyAssets/Ads/AdMob.cs
         }
     }
 
@@ -177,10 +221,6 @@ public class AdMob : MonoBehaviour
 
     public void RequestInterstitial()
     {
-        if (interstitial != null)
-        {
-            interstitial.Destroy();
-        }
         interstitial = new InterstitialAd(interstitialId);
 
         interstitial.OnAdLoaded += HandleInterstitialAdLoaded;
@@ -189,12 +229,20 @@ public class AdMob : MonoBehaviour
         interstitial.OnAdClosed += HandleInterstitialAdClosed;
         interstitial.OnAdLeavingApplication += HandleInterstitialAdLeavingApplication;
 
-        AdRequest request = new AdRequest.Builder().Build();
+        AdRequest request = new AdRequest.Builder().AddTestDevice(testdeviceID).Build();
         interstitial.LoadAd(request);
     }
     public void ShowInterstitial()
     {
+<<<<<<< HEAD:Assets/MyAssets/AdMob.cs
         RequestInterstitial();
+=======
+        if (!interstitial.IsLoaded())
+        {
+            RequestInterstitial();
+        }
+        interstitial.Show();
+>>>>>>> 8c70122d8ef024d404e94d07e0c454d9f5046d94:Assets/MyAssets/Ads/AdMob.cs
     }
     public void HandleInterstitialAdLoaded(object sender, EventArgs args)
     {
@@ -239,6 +287,7 @@ public class AdMob : MonoBehaviour
     }
     public void ShowRewardAd()
     {
+<<<<<<< HEAD:Assets/MyAssets/AdMob.cs
         //Å‰‚Í‚±‚±‚É‚Í‚¢‚é
         if (rewardedAd == null)
         {
@@ -260,6 +309,13 @@ public class AdMob : MonoBehaviour
             }
         }
 
+=======
+        if (!rewardedAd.IsLoaded())
+        {
+            RequestReward();
+        }
+        rewardedAd.Show();
+>>>>>>> 8c70122d8ef024d404e94d07e0c454d9f5046d94:Assets/MyAssets/Ads/AdMob.cs
     }
 
 
@@ -269,6 +325,12 @@ public class AdMob : MonoBehaviour
     }
 
 
+<<<<<<< HEAD:Assets/MyAssets/AdMob.cs
+=======
+        AdRequest request = new AdRequest.Builder().AddTestDevice(testdeviceID).Build();
+        rewardedAd.LoadAd(request);
+    }
+>>>>>>> 8c70122d8ef024d404e94d07e0c454d9f5046d94:Assets/MyAssets/Ads/AdMob.cs
     public void HandleRewardedAdLoaded(object sender, EventArgs args)
     {
         print("HandleRewardedAdLoaded event received");
